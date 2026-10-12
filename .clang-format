@@ -1,9 +1,20 @@
 BasedOnStyle: LLVM
+
+# Indentation
+IndentWidth: 4
+UseTab: Never
+
+# Braces
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterFunction: true
   AfterControlStatement: Never
-IndentWidth: 4
-UseTab: Never
+
+# Pointers
 PointerAlignment: Right
-ColumnLimit: 0
+
+# Line Length
+ColumnLimit: 100
+
+# Short Functions
+AllowShortFunctionsOnASingleLine: None
