@@ -39,13 +39,29 @@ void c_destroy(CDeque *deque)
     free(deque->items);
     free(deque);
 }
+static void c_ensure_capacity(CDeque *deque)
+{
+    size_t new_capacity = deque->capacity * 2;
+    CItem *new_items = malloc(sizeof(*new_items) * new_capacity);
+    if (new_items == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < deque->size; ++i) {
+        new_items[i] = deque->items[(deque->front + i) % deque->capacity];
+    }
+    free(deque->items);
+    deque->items = new_items;
+    deque->capacity = new_capacity;
+    deque->front = 0;
+}
 void c_push_front(CDeque *deque, int value)
 {
     if (deque == NULL) {
         return;
     }
     if (deque->size == deque->capacity) {
-        c_resize(deque);
+        c_ensure_capacity(deque);
         if (deque->size == deque->capacity) {
             return;
         }
@@ -61,7 +77,7 @@ void c_push_back(CDeque *deque, int value)
         return;
     }
     if (deque->size == deque->capacity) {
-        c_resize(deque);
+        c_ensure_capacity(deque);
         if (deque->size == deque->capacity) {
             return;
         }
@@ -69,22 +85,6 @@ void c_push_back(CDeque *deque, int value)
     size_t back = (deque->front + deque->size) % deque->capacity;
     deque->items[back] = value;
     deque->size++;
-}
-void c_resize(CDeque *deque)
-{
-    size_t new_capacity = deque->capacity * 2;
-    CItem *new_items = malloc(sizeof(*new_items) * new_capacity);
-    if (new_items == NULL) {
-        return;
-    }
-
-    for (size_t i = 0; i < deque->size; ++i) {
-        new_items[i] = deque->items[(deque->front + i) % deque->capacity];
-    }
-    free(deque->items);
-    deque->items = new_items;
-    deque->capacity = new_capacity;
-    deque->front = 0;
 }
 CItem c_pop_front(CDeque *deque)
 {
