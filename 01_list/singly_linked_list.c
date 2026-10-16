@@ -6,7 +6,6 @@ struct SLNode {
     SLItem data;
     struct SLNode *next;
 };
-typedef struct SLNode *SLIter;
 
 struct SinglyLinkedList {
     SLIter head;
@@ -30,14 +29,14 @@ void sl_destroy(SLList *list)
         return;
     }
     SLIter target = list->head;
-    while (target) {
+    while (target != NULL) {
         SLIter next_node = target->next;
         free(target);
         target = next_node;
     }
     free(list);
 }
-static SLIter sl_node_create(int value)
+static SLIter node_create(int value)
 {
     SLIter new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
@@ -53,7 +52,7 @@ void sl_insert_at(SLList *list, size_t index, int value)
     if (list == NULL || index > list->size) {
         return;
     }
-    SLIter new_node = sl_node_create(value);
+    SLIter new_node = node_create(value);
     if (new_node == NULL) {
         return;
     }
@@ -75,13 +74,13 @@ SLItem sl_delete_at(SLList *list, size_t index)
     if (list == NULL || index >= list->size) {
         return -1;
     }
-    SLIter target = list->head;
+    SLIter target = NULL;
 
     if (index == 0) {
+        target = list->head;
         list->head = target->next;
     } else {
         SLIter prev = list->head;
-
         for (size_t i = 0; i < index - 1; i++) {
             prev = prev->next;
         }
@@ -100,7 +99,6 @@ SLItem sl_get(SLList *list, size_t index)
         return -1;
     }
     SLIter target = list->head;
-
     for (size_t i = 0; i < index; i++) {
         target = target->next;
     }

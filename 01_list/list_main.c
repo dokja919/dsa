@@ -108,7 +108,7 @@ void cdl_test(void)
 }
 int main(void)
 {
-    int list_number = 1;
+    int list_number = 3;
 
     switch (list_number) {
     case 0:
@@ -117,10 +117,10 @@ int main(void)
     case 1:
         sl_test();
         break;
-    case 3:
+    case 2:
         cl_test();
         break;
-    case 2:
+    case 3:
         dl_test();
         break;
     case 4:
