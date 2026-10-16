@@ -42,6 +42,20 @@ CDLList *cdl_create(void)
 
     return list;
 }
+void cdl_destroy(CDLList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+    CDLIter current = list->sentinel->next;
+    while (current != list->sentinel) {
+        CDLIter next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+    free(list->sentinel);
+    free(list);
+}
 static CDLIter node_at(CDLList *list, size_t index)
 {
     CDLIter target = NULL;
@@ -70,10 +84,10 @@ void cdl_insert_at(CDLList *list, size_t index, int value)
         return;
     }
     CDLIter next = node_at(list, index);
-    CDLIter prev = next->prev;
 
-    prev->next = new_node;
-    new_node->prev = prev;
+    next->prev->next = new_node;
+    new_node->prev = next->prev;
+
     new_node->next = next;
     next->prev = new_node;
 
@@ -85,28 +99,15 @@ CDLItem cdl_delete_at(CDLList *list, size_t index)
         return 0;
     }
     CDLIter target = node_at(list, index);
-    target->prev->next = target->next;
+
     target->next->prev = target->prev;
+    target->prev->next = target->next;
 
     CDLItem data = target->data;
     free(target);
     list->size--;
 
     return data;
-}
-void cdl_destroy(CDLList *list)
-{
-    if (list == NULL) {
-        return;
-    }
-    CDLIter current = list->sentinel->next;
-    while (current != list->sentinel) {
-        CDLIter next_node = current->next;
-        free(current);
-        current = next_node;
-    }
-    free(list->sentinel);
-    free(list);
 }
 CDLItem cdl_get(CDLList *list, size_t index)
 {
