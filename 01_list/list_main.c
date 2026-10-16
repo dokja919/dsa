@@ -46,26 +46,6 @@ void sl_test(void)
     printf("\nDestroying List...\n");
     sl_destroy(list);
 }
-void dl_test(void)
-{
-    DLList *list = dl_create();
-
-    for (int i = 5; i > 0; i--) {
-        dl_insert_at(list, dl_size(list), i);
-    }
-    dl_insert_at(list, dl_size(list), -1);
-    dl_insert_at(list, dl_size(list), -2);
-
-    dl_print(list);
-
-    printf("\nInserting 3000 At [2]...\n\n");
-    dl_insert_at(list, 2, 3000);
-
-    dl_print(list);
-
-    printf("\nDestroying List...\n");
-    dl_destroy(list);
-}
 void cl_test(void)
 {
     CLList *list = cl_create();
@@ -85,6 +65,26 @@ void cl_test(void)
 
     printf("\nDestroying List...\n");
     cl_destroy(list);
+}
+void dl_test(void)
+{
+    DLList *list = dl_create();
+
+    for (int i = 5; i > 0; i--) {
+        dl_insert_at(list, dl_size(list), i);
+    }
+    dl_insert_at(list, dl_size(list), -1);
+    dl_insert_at(list, dl_size(list), -2);
+
+    dl_print(list);
+
+    printf("\nInserting 3000 At [2]...\n\n");
+    dl_insert_at(list, 2, 3000);
+
+    dl_print(list);
+
+    printf("\nDestroying List...\n");
+    dl_destroy(list);
 }
 void cdl_test(void)
 {
@@ -117,11 +117,11 @@ int main(void)
     case 1:
         sl_test();
         break;
-    case 2:
-        dl_test();
-        break;
     case 3:
         cl_test();
+        break;
+    case 2:
+        dl_test();
         break;
     case 4:
         cdl_test();
