@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 typedef int SLItem;
+typedef struct _sl_node sl_node;
 typedef struct SinglyLinkedList SLList;
 
 SLList *sl_create(void);

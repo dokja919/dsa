@@ -1,5 +1,4 @@
 #include "circular_queue.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 #define INITIAL_CAPACITY 8
@@ -18,14 +17,12 @@ CQueue *c_create(void)
         return NULL;
     }
 
-    size_t capacity = INITIAL_CAPACITY;
-    queue->items = malloc(sizeof(*queue->items) * capacity);
+    queue->capacity = INITIAL_CAPACITY;
+    queue->items = malloc(sizeof(*queue->items) * queue->capacity);
     if (queue->items == NULL) {
         free(queue);
         return NULL;
     }
-
-    queue->capacity = capacity;
     queue->front = 0;
     queue->size = 0;
 
@@ -50,14 +47,14 @@ void c_enqueue(CQueue *queue, int value)
         if (new_items == NULL) {
             return;
         }
-
-        for (size_t i = 0; i < queue->size; ++i) {
-            new_items[i] = queue->items[(queue->front + i) % queue->capacity];
+        for (size_t i = 0; i < queue->size; i++) {
+            size_t j = (queue->front + i) % queue->capacity;
+            new_items[i] = queue->items[j];
         }
         free(queue->items);
         queue->items = new_items;
-        queue->front = 0;
         queue->capacity = new_capacity;
+        queue->front = 0;
     }
     size_t rear = (queue->front + queue->size) % queue->capacity;
     queue->items[rear] = value;

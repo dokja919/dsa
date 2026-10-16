@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _sl_node {
+struct _sl_node {
     SLItem data;
     struct _sl_node *next;
-} sl_node;
+};
 
 struct SinglyLinkedList {
     sl_node *head;
@@ -59,10 +59,6 @@ void sl_insert_at(SLList *list, size_t index, int value)
 
     list->size++;
 }
-static void sl_node_destroy(sl_node *node)
-{
-    free(node);
-}
 SLItem sl_delete_at(SLList *list, size_t index)
 {
     if (list == NULL || index >= list->size) {
@@ -83,7 +79,7 @@ SLItem sl_delete_at(SLList *list, size_t index)
         prev->next = target->next;
     }
     SLItem data = target->data;
-    sl_node_destroy(target);
+    free(target);
     list->size--;
     return data;
 }

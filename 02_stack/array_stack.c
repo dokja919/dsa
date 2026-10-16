@@ -1,5 +1,4 @@
 #include "array_stack.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 #define INITIAL_CAPACITY 8
@@ -17,13 +16,12 @@ AStack *a_create(void)
         return NULL;
     }
 
-    size_t capacity = INITIAL_CAPACITY;
-    stack->items = malloc(sizeof(*stack->items) * capacity);
+    stack->capacity = INITIAL_CAPACITY;
+    stack->items = malloc(sizeof(*stack->items) * stack->capacity);
     if (stack->items == NULL) {
         free(stack);
         return NULL;
     }
-    stack->capacity = capacity;
     stack->size = 0;
 
     return stack;
@@ -41,7 +39,6 @@ void a_push(AStack *stack, int value)
     if (stack == NULL) {
         return;
     }
-
     if (stack->size == stack->capacity) {
         size_t new_capacity = stack->capacity * 2;
 
@@ -49,7 +46,6 @@ void a_push(AStack *stack, int value)
         if (new_items == NULL) {
             return;
         }
-
         stack->items = new_items;
         stack->capacity = new_capacity;
     }
@@ -62,13 +58,15 @@ AItem a_pop(AStack *stack)
         return 0;
     }
     stack->size--;
+
     return stack->items[stack->size];
 }
-AItem a_top(AStack *stack)
+AItem a_peek(AStack *stack)
 {
     if (a_is_empty(stack)) {
         return 0;
     }
+
     return stack->items[stack->size - 1];
 }
 size_t a_size(AStack *stack)

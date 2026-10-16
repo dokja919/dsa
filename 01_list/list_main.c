@@ -108,7 +108,7 @@ void cdl_test(void)
 }
 int main(void)
 {
-    int list_number = 2;
+    int list_number = 1;
 
     switch (list_number) {
     case 0:

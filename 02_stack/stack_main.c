@@ -15,7 +15,7 @@ void a_test(void)
     printf(
         "size: %zu, Top: %d\n",
         a_size(stack),
-        a_top(stack));
+        a_peek(stack));
 
     while (a_is_empty(stack) == false) {
         printf("Popped: %d\n", a_pop(stack));

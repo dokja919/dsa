@@ -41,7 +41,7 @@ DLList *dl_create(void)
     }
     list->tail_sentinel = dl_node_create(0);
     if (list->tail_sentinel == NULL) {
-        dl_node_destroy(list->head_sentinel);
+        free(list->head_sentinel);
         free(list);
         return NULL;
     }
@@ -99,10 +99,6 @@ void dl_insert_at(DLList *list, size_t pos, int value)
 
     list->size++;
 }
-static void dl_node_destroy(dl_node *node)
-{
-    free(node);
-}
 DLItem dl_delete_at(DLList *list, size_t pos)
 {
     if (list == NULL || pos >= list->size) {
@@ -118,7 +114,7 @@ DLItem dl_delete_at(DLList *list, size_t pos)
     target->next->prev = target->prev;
 
     DLItem data = target->data;
-    dl_node_destroy(target);
+    free(target);
     list->size--;
     return data;
 }
@@ -132,8 +128,8 @@ void dl_destroy(DLList *list)
         dl_delete_at(list, 0);
     }
 
-    dl_node_destroy(list->head_sentinel);
-    dl_node_destroy(list->tail_sentinel);
+    free(list->head_sentinel);
+    free(list->tail_sentinel);
     free(list);
 }
 DLItem dl_get(DLList *list, size_t pos)
