@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 typedef int CDLItem;
+typedef struct CDLNode *CDLIter;
 typedef struct CircularDoublyLinkedList CDLList;
 
 void cdl_insert_at(CDLList *list, size_t index, int value);
