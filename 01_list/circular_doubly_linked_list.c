@@ -122,7 +122,7 @@ size_t cdl_size(CDLList *list)
 }
 void cdl_print(CDLList *list)
 {
-    if (list == NULL || list->sentinel == NULL) {
+    if (list == NULL) {
         return;
     }
     CDLIter current = list->sentinel->next;
