@@ -8,7 +8,9 @@
 void a_test(void)
 {
     AList *list = a_create();
-
+    if (list == NULL) {
+        return;
+    }
     for (int i = 0; i < 5; i++) {
         a_insert_at(list, a_size(list), i);
     }
@@ -29,7 +31,9 @@ void a_test(void)
 void sl_test(void)
 {
     SLList *list = sl_create();
-
+    if (list == NULL) {
+        return;
+    }
     for (int i = 5; i > 0; i--) {
         sl_insert_at(list, sl_size(list), i);
     }
@@ -49,7 +53,9 @@ void sl_test(void)
 void cl_test(void)
 {
     CLList *list = cl_create();
-
+    if (list == NULL) {
+        return;
+    }
     for (int i = 5; i > 0; i--) {
         cl_insert_at(list, cl_size(list), i);
     }
@@ -69,7 +75,9 @@ void cl_test(void)
 void dl_test(void)
 {
     DLList *list = dl_create();
-
+    if (list == NULL) {
+        return;
+    }
     for (int i = 5; i > 0; i--) {
         dl_insert_at(list, dl_size(list), i);
     }
@@ -88,22 +96,29 @@ void dl_test(void)
 }
 void cdl_test(void)
 {
+    int value;
     CDLList *list = cdl_create();
-
-    for (int i = 5; i > 0; i--) {
-        cdl_insert_at(list, cdl_size(list), i);
+    if (list == NULL) {
+        return;
     }
-    cdl_print(list);
-
-    printf("\nInserting 3000 At [3]...\n\n");
-    cdl_insert_at(list, 3, 3000);
-
-    printf("\nRemoving Node at [2]...\n\n");
-    cdl_delete_at(list, 2);
+    for (int i = 1; i <= 5; i++) {
+        cdl_insert_at(list, cdl_size(list), i * 10);
+    }
+    cdl_insert_at(list, 0, 5);
+    cdl_insert_at(list, 3, 25);
 
     cdl_print(list);
 
-    printf("\nDestroying List...\n");
+    if (cdl_get(list, 3, &value)) {
+        printf("Get [3]: %d\n", value);
+    }
+    if (cdl_delete_at(list, 3, &value)) {
+        printf("Delete [3]: %d\n", value);
+    }
+
+    cdl_print(list);
+    printf("Size: %zu\n", cdl_size(list));
+
     cdl_destroy(list);
 }
 int main(void)
