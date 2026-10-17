@@ -5,7 +5,6 @@
 #include <stddef.h>
 
 typedef int CDLItem;
-typedef struct CDLNode *CDLNodeHandle;
 typedef struct CircularDoublyLinkedList CDLList;
 
 CDLList *cdl_create(void);

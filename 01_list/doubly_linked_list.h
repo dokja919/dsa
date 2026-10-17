@@ -4,7 +4,6 @@
 #include <stddef.h>
 
 typedef int DLItem;
-typedef struct DLNode *DLIter;
 typedef struct DoublyLinkedList DLList;
 
 DLList *dl_create(void);

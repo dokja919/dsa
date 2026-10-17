@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct SLNode {
+typedef struct SLNode {
     SLItem data;
     struct SLNode *next;
-};
+} SLNode;
 
 struct SinglyLinkedList {
-    SLIter head;
+    SLNode *head;
     size_t size;
 };
 
@@ -28,17 +28,17 @@ void sl_destroy(SLList *list)
     if (list == NULL) {
         return;
     }
-    SLIter target = list->head;
+    SLNode *target = list->head;
     while (target != NULL) {
-        SLIter next_node = target->next;
+        SLNode *next_node = target->next;
         free(target);
         target = next_node;
     }
     free(list);
 }
-static SLIter node_create(int value)
+static SLNode *node_create(int value)
 {
-    SLIter new_node = malloc(sizeof(*new_node));
+    SLNode *new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
         return NULL;
     }
@@ -52,7 +52,7 @@ void sl_insert_at(SLList *list, size_t index, int value)
     if (list == NULL || index > list->size) {
         return;
     }
-    SLIter new_node = node_create(value);
+    SLNode *new_node = node_create(value);
     if (new_node == NULL) {
         return;
     }
@@ -60,7 +60,7 @@ void sl_insert_at(SLList *list, size_t index, int value)
         new_node->next = list->head;
         list->head = new_node;
     } else {
-        SLIter prev = list->head;
+        SLNode *prev = list->head;
         for (size_t i = 0; i < index - 1; i++) {
             prev = prev->next;
         }
@@ -74,13 +74,13 @@ SLItem sl_delete_at(SLList *list, size_t index)
     if (list == NULL || index >= list->size) {
         return -1;
     }
-    SLIter target = NULL;
+    SLNode *target = NULL;
 
     if (index == 0) {
         target = list->head;
         list->head = target->next;
     } else {
-        SLIter prev = list->head;
+        SLNode *prev = list->head;
         for (size_t i = 0; i < index - 1; i++) {
             prev = prev->next;
         }
@@ -98,7 +98,7 @@ SLItem sl_get(SLList *list, size_t index)
     if (list == NULL || index >= list->size) {
         return -1;
     }
-    SLIter target = list->head;
+    SLNode *target = list->head;
     for (size_t i = 0; i < index; i++) {
         target = target->next;
     }
@@ -109,7 +109,7 @@ void sl_print(SLList *list)
     if (list == NULL || list->head == NULL) {
         return;
     }
-    SLIter current = list->head;
+    SLNode *current = list->head;
 
     while (current != NULL) {
         printf("%d -> ", current->data);
