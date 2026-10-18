@@ -81,7 +81,8 @@ void bs_insert(BSOrderedSet *tree, int key)
     }
     tree->root = bs_node_insert(tree->root, key);
 }
-static void bs_transplant(BSOrderedSet *tree, BSNode *parent, BSNode *old_subtree, BSNode *new_subtree)
+static void bs_transplant(BSOrderedSet *tree, BSNode *parent, BSNode *old_subtree,
+                          BSNode *new_subtree)
 {
     if (parent == NULL) {
         tree->root = new_subtree;
@@ -175,26 +176,3 @@ void bs_print(BSOrderedSet *tree)
     bs_inorder(tree->root);
     printf("\n");
 }
-// static int a_binary_search(AList *list, int key)
-//{
-//     if (list == NULL) {
-//         return -1;
-//     }
-//     int left = 0;
-//     int mid = 0;
-//     int right = (int)list->size - 1;
-//
-//     while (left <= right) {
-//         mid = (left + right) / 2;
-//
-//         if (key == list->items[mid]) {
-//             return mid;
-//         }
-//         if (key < list->items[mid]) {
-//             right = mid - 1;
-//         } else {
-//             left = mid + 1;
-//         }
-//     }
-//     return -1;
-// }

@@ -41,3 +41,26 @@
 //     return index;
 // }
 //
+// static int a_binary_search(AList *list, int key)
+//{
+//     if (list == NULL) {
+//         return -1;
+//     }
+//     int left = 0;
+//     int mid = 0;
+//     int right = (int)list->size - 1;
+//
+//     while (left <= right) {
+//         mid = (left + right) / 2;
+//
+//         if (key == list->items[mid]) {
+//             return mid;
+//         }
+//         if (key < list->items[mid]) {
+//             right = mid - 1;
+//         } else {
+//             left = mid + 1;
+//         }
+//     }
+//     return -1;
+// }
