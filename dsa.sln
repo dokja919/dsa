@@ -19,17 +19,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06_search_tree", "06_search
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07_heap", "07_heap\07_heap.vcxproj", "{9E2E1575-AB57-4B63-B493-97772135DB65}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_sorting_algorithm", "08_sorting_algorithm\08_sorting_algorithm.vcxproj", "{B8F126CB-7B7F-4DCF-9B93-1C0F02D51F21}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09_hash_table", "09_hash_table\09_hash_table.vcxproj", "{036BA3C8-1880-4A6A-86F2-F0A4A72BC632}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10_algorithmic_paradigm", "10_algorithmic_paradigm\10_algorithmic_paradigm.vcxproj", "{9D197B00-74EA-415F-A61E-EF451FAAD936}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "etc", "etc\etc.vcxproj", "{7BB69846-D080-471D-83B9-0FEB25C6FC17}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "disjoint_set", "disjoint_set\disjoint_set.vcxproj", "{A9C581AD-BEFE-4773-A0CA-85D3A35D3362}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unordered_set_map", "unordered_set_map\unordered_set_map.vcxproj", "{421830ED-F794-4C33-9FA2-933FEC5BBD44}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_sorting_algorithm", "08_sorting_algorithm\08_sorting_algorithm.vcxproj", "{B8F126CB-7B7F-4DCF-9B93-1C0F02D51F21}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09_hash_table", "09_hash_table\09_hash_table.vcxproj", "{036BA3C8-1880-4A6A-86F2-F0A4A72BC632}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10_algorithmic_techniques", "10_algorithmic_techniques\10_algorithmic_techniques.vcxproj", "{9D197B00-74EA-415F-A61E-EF451FAAD936}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
