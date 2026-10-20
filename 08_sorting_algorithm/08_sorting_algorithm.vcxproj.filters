@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="sort.c">
+    <ClCompile Include="sort_main.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="unsorted_array.c">
