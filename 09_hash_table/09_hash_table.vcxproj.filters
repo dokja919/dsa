@@ -15,19 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="separate_chaining_hash_table.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="separate_chaining_hash_table1.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="separate_chaining_hash_table2.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="separate_chaining_hash_table3.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="separate_chaining_hash_table4.c">
+    <ClCompile Include="direct_address_table.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
