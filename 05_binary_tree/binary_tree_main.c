@@ -49,7 +49,7 @@ void l_test(void)
 }
 int main(void)
 {
-    int bt_number = 0;
+    int bt_number = 1;
 
     switch (bt_number) {
     case 0:

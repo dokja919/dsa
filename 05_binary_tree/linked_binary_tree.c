@@ -2,10 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-    int value;
-} LItem;
-
 struct LNode {
     LItem data;
     struct LNode *left;
@@ -31,7 +27,7 @@ LNode *l_node_create(int value)
     if (new_node == NULL) {
         return NULL;
     }
-    new_node->data.value = value;
+    new_node->data = value;
     new_node->left = NULL;
     new_node->right = NULL;
 
@@ -91,14 +87,14 @@ LNode *l_get_right(LNode *node)
 
 int l_get(LNode *node)
 {
-    return node == NULL ? 0 : node->data.value;
+    return node == NULL ? 0 : node->data;
 }
 void l_preorder(LNode *node)
 {
     if (node == NULL) {
         return;
     }
-    printf("%d ", node->data.value);
+    printf("%d ", node->data);
     l_preorder(node->left);
     l_preorder(node->right);
 }
@@ -108,7 +104,7 @@ void l_inorder(LNode *node)
         return;
     }
     l_inorder(node->left);
-    printf("%d ", node->data.value);
+    printf("%d ", node->data);
     l_inorder(node->right);
 }
 void l_postorder(LNode *node)
@@ -118,5 +114,5 @@ void l_postorder(LNode *node)
     }
     l_postorder(node->left);
     l_postorder(node->right);
-    printf("%d ", node->data.value);
+    printf("%d ", node->data);
 }

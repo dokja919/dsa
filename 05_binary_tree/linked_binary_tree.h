@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+typedef int LItem;
 typedef struct LNode LNode;
 typedef struct LinkedBinaryTree LBinaryTree;
 

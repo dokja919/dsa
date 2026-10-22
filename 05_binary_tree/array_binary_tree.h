@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+typedef int AItem;
 typedef struct ArrayBinaryTree ABinaryTree;
 
 ABinaryTree *a_create(void);

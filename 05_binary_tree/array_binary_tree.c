@@ -3,10 +3,6 @@
 #include <stdlib.h>
 #define INITIAL_CAPACITY 32
 
-typedef struct {
-    int value;
-} AItem;
-
 struct ArrayBinaryTree {
     AItem *items;
     size_t capacity;
@@ -49,7 +45,7 @@ void a_insert(ABinaryTree *tree, int value)
         return;
     }
 
-    tree->items[tree->size].value = value;
+    tree->items[tree->size] = value;
     tree->size++;
 }
 int a_get_parent(ABinaryTree *tree, size_t child_pos)
@@ -59,7 +55,7 @@ int a_get_parent(ABinaryTree *tree, size_t child_pos)
     }
     size_t parent_pos = (child_pos - 1) / 2;
 
-    return tree->items[parent_pos].value;
+    return tree->items[parent_pos];
 }
 int a_get_left(ABinaryTree *tree, size_t parent_pos)
 {
@@ -70,7 +66,7 @@ int a_get_left(ABinaryTree *tree, size_t parent_pos)
     if (left_pos >= tree->size) {
         return 0;
     }
-    return tree->items[left_pos].value;
+    return tree->items[left_pos];
 }
 int a_get_right(ABinaryTree *tree, size_t parent_pos)
 {
@@ -82,7 +78,7 @@ int a_get_right(ABinaryTree *tree, size_t parent_pos)
     if (right_pos >= tree->size) {
         return 0;
     }
-    return tree->items[right_pos].value;
+    return tree->items[right_pos];
 }
 void a_print(ABinaryTree *tree)
 {
@@ -90,7 +86,7 @@ void a_print(ABinaryTree *tree)
         return;
     }
     for (size_t i = 0; i < tree->size; i++) {
-        printf("index %zu : %d\n", i, tree->items[i].value);
+        printf("index %zu : %d\n", i, tree->items[i]);
     }
 }
 bool a_is_empty(ABinaryTree *tree)
