@@ -1,0 +1,20 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="00_array/00_array.vcxproj" Id="65426fe3-1417-4577-b9d6-b860c60766ab" />
+  <Project Path="01_list/01_list.vcxproj" Id="17129cf0-0197-4a63-9695-6c796db93ed7" />
+  <Project Path="02_stack/02_stack.vcxproj" Id="4b870fe9-29b0-42ab-a977-c268a886dd9e" />
+  <Project Path="03_queue/03_queue.vcxproj" Id="b3ee3b85-e861-4936-896c-0b91f12bf4ef" />
+  <Project Path="04_deque/04_deque.vcxproj" Id="8f495503-88b8-476c-8ea1-2b79b02bb2b5" />
+  <Project Path="05_binary_tree/05_binary_tree.vcxproj" Id="6fb77440-ccf8-4715-8e89-233ecb393d8e" />
+  <Project Path="06_search_tree/06_search_tree.vcxproj" Id="3d0984c9-f28d-4173-a080-f9bbb697e28a" />
+  <Project Path="07_heap/07_heap.vcxproj" Id="9e2e1575-ab57-4b63-b493-97772135db65" />
+  <Project Path="08_sorting_algorithm/08_sorting_algorithm.vcxproj" Id="b8f126cb-7b7f-4dcf-9b93-1c0f02d51f21" />
+  <Project Path="09_hash_table/09_hash_table.vcxproj" Id="036ba3c8-1880-4a6a-86f2-f0a4a72bc632" />
+  <Project Path="10_algorithmic_paradigm/10_algorithmic_paradigm.vcxproj" Id="9d197b00-74ea-415f-a61e-ef451faad936" />
+  <Project Path="disjoint_set/disjoint_set.vcxproj" Id="a9c581ad-befe-4773-a0ca-85d3a35d3362" />
+  <Project Path="etc/etc.vcxproj" Id="7bb69846-d080-471d-83b9-0feb25c6fc17" />
+  <Project Path="unordered_set_map/unordered_set_map.vcxproj" Id="421830ed-f794-4c33-9fa2-933fec5bbd44" />
+</Solution>
