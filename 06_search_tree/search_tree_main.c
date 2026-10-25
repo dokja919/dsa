@@ -7,26 +7,25 @@ void bs_test(void)
 {
     BSOrderedSet *os = bs_create();
     int keys[] = {10, 20, 30, 40, 50, 25};
+    BSItem data;
 
     for (int i = 0; i < 6; i++) {
-        bs_insert(os, keys[i]);
+        data.key = keys[i];
+        if (!bs_insert(os, data)) {
+            return;
+        }
     }
-
     bs_print(os);
 
-    BSNode *node = bs_search(os, 40);
-
-    if (node != NULL) {
-        printf("result: %d\n", bs_get(node));
+    if (bs_search(os, 40, &data)) {
+        bs_get(data);
     }
-
     printf("after removing 30: ");
     bs_delete(os, 30);
     bs_print(os);
 
     bs_destroy(os);
 }
-
 void avl_test(void)
 {
     AVLOrderedSet *os = avl_create();
@@ -35,7 +34,6 @@ void avl_test(void)
     for (int i = 0; i < 6; i++) {
         avl_insert(os, keys[i]);
     }
-
     avl_print(os);
 
     printf("after removing 30\n");
@@ -52,7 +50,6 @@ void rb_test(void)
     for (int i = 0; i < 6; i++) {
         rb_insert(os, keys[i]);
     }
-
     rb_print(os);
 
     printf("after removing 30\n");
@@ -61,24 +58,20 @@ void rb_test(void)
 
     rb_destroy(os);
 }
-
 int main(void)
 {
-    int os_number = 1;
+    int os_number = 0;
 
     switch (os_number) {
     case 0:
         bs_test();
         break;
-
     case 1:
         avl_test();
         break;
-
     case 2:
         rb_test();
         break;
     }
-
     return 0;
 }
