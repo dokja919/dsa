@@ -163,13 +163,6 @@ bool bs_search(BSOrderedSet *tree, int key, BSItem *data)
     }
     return false;
 }
-void bs_get(BSItem data)
-{
-    printf("-----\n");
-    printf("data\n");
-    printf("key: %d\n", data.key);
-    printf("-----\n");
-}
 static void bs_inorder(BSNode *node)
 {
     if (node == NULL) {

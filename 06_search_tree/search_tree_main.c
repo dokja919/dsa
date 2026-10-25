@@ -18,7 +18,7 @@ void bs_test(void)
     bs_print(os);
 
     if (bs_search(os, 40, &data)) {
-        bs_get(data);
+        printf("key: %d\n", data.key);
     }
     printf("after removing 30: ");
     bs_delete(os, 30);
