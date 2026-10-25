@@ -23,14 +23,20 @@ BSOrderedSet *bs_create(void)
 
     return tree;
 }
-static void bs_subtree_destroy(BSNode *target)
+static void bs_subtree_destroy(BSNode *root)
 {
-    if (target == NULL) {
-        return;
+    while (root != NULL) {
+        if (root->left != NULL) {
+            BSNode *left = root->left;
+            root->left = left->right;
+            left->right = root;
+            root = left;
+        } else {
+            BSNode *right = root->right;
+            free(root);
+            root = right;
+        }
     }
-    bs_subtree_destroy(target->left);
-    bs_subtree_destroy(target->right);
-    free(target);
 }
 void bs_destroy(BSOrderedSet *tree)
 {
@@ -52,25 +58,36 @@ static BSNode *bs_node_create(BSItem data)
 
     return new_node;
 }
-static BSNode *bs_node_insert(BSNode *node, BSItem data)
-{
-    if (node == NULL) {
-        return bs_node_create(data);
-    }
-    if (data.key < node->data.key) {
-        node->left = bs_node_insert(node->left, data);
-    } else if (data.key > node->data.key) {
-        node->right = bs_node_insert(node->right, data);
-    }
-    return node;
-}
 bool bs_insert(BSOrderedSet *tree, BSItem data)
 {
     if (tree == NULL) {
         return false;
     }
-    tree->root = bs_node_insert(tree->root, data);
+    BSNode *parent = NULL;
+    BSNode *current = tree->root;
+    while (current != NULL) {
+        parent = current;
 
+        if (data.key < current->data.key) {
+            current = current->left;
+        } else if (data.key > current->data.key) {
+            current = current->right;
+        } else {
+            current->data = data;
+            return true;
+        }
+    }
+    BSNode *new_node = bs_node_create(data);
+    if (new_node == NULL) {
+        return false;
+    }
+    if (parent == NULL) {
+        tree->root = new_node;
+    } else if (data.key < parent->data.key) {
+        parent->left = new_node;
+    } else {
+        parent->right = new_node;
+    }
     return true;
 }
 static void bs_transplant(BSOrderedSet *tree, BSNode *parent, BSNode *old_child, BSNode *new_child)
