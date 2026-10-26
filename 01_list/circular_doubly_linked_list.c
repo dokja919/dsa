@@ -56,6 +56,71 @@ void cdl_destroy(CDLList *list)
     free(list->sentinel);
     free(list);
 }
+static bool node_valid(CDLList *list, CDLNodeHandle node)
+{
+    return list != NULL && node != NULL && node != list->sentinel;
+}
+bool cdl_insert_before(CDLList *list, CDLNodeHandle next, int value)
+{
+    if (node_valid(list, next) == false) {
+        return false;
+    }
+    CDLNode *new_node = cdl_node_create(value);
+    if (new_node == NULL) {
+        return false;
+    }
+    new_node->next = next;
+    new_node->prev = next->prev;
+    next->prev->next = new_node;
+    next->prev = new_node;
+    list->size++;
+
+    return true;
+}
+bool cdl_delete(CDLList *list, CDLNodeHandle target, int *value)
+{
+    if (node_valid(list, target) == false || value == NULL) {
+        return false;
+    }
+    *value = target->data;
+    target->prev->next = target->next;
+    target->next->prev = target->prev;
+
+    free(target);
+    list->size--;
+
+    return true;
+}
+bool cdl_get(CDLList *list, CDLNodeHandle node, int *value)
+{
+    if (node_valid(list, node) == false || value == NULL) {
+        return false;
+    }
+    *value = node->data;
+
+    return true;
+}
+bool cdl_set(CDLList *list, CDLNodeHandle node, int value)
+{
+    if (node_valid(list, node) == false) {
+        return false;
+    }
+    node->data = value;
+
+    return true;
+}
+CDLNodeHandle cdl_find(CDLList *list, int value)
+{
+    if (list == NULL) {
+        return NULL;
+    }
+    for (CDLNode *target = list->sentinel->next; target != list->sentinel; target = target->next) {
+        if (target->data == value) {
+            return target;
+        }
+    }
+    return NULL;
+}
 static CDLNode *node_at(CDLList *list, size_t index)
 {
     CDLNode *target = NULL;
@@ -111,7 +176,7 @@ bool cdl_delete_at(CDLList *list, size_t index, int *value)
 
     return true;
 }
-bool cdl_get(CDLList *list, size_t index, int *value)
+bool cdl_get_at(CDLList *list, size_t index, int *value)
 {
     if (list == NULL || index >= list->size || value == NULL) {
         return false;

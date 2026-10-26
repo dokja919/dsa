@@ -24,7 +24,7 @@
     <ClCompile Include="singly_linked_list.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="list_main.c">
+    <ClCompile Include="main_list.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="array_list.c">

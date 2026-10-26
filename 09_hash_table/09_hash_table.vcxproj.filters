@@ -24,7 +24,7 @@
     <ClCompile Include="sc4.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="hash_table_main.c">
+    <ClCompile Include="main_hash_table.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

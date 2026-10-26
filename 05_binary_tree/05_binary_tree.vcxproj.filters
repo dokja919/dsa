@@ -23,7 +23,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="binary_tree_main.c">
+    <ClCompile Include="main_binary_tree.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="linked_binary_tree.c">

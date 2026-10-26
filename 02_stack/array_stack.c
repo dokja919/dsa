@@ -1,7 +1,7 @@
 #include "array_stack.h"
 #include <stdlib.h>
 
-#define INITIAL_CAPACITY 8
+#define INITIAL_CAPACITY 8 // 16
 
 struct ArrayStack {
     AItem *items;
@@ -15,7 +15,6 @@ AStack *a_create(void)
     if (stack == NULL) {
         return NULL;
     }
-
     stack->capacity = INITIAL_CAPACITY;
     stack->items = malloc(sizeof(*stack->items) * stack->capacity);
     if (stack->items == NULL) {
@@ -34,44 +33,48 @@ void a_destroy(AStack *stack)
     free(stack->items);
     free(stack);
 }
-void a_push(AStack *stack, int value)
+bool a_push(AStack *stack, int value)
 {
     if (stack == NULL) {
-        return;
+        return false;
     }
     if (stack->size == stack->capacity) {
         size_t new_capacity = stack->capacity * 2;
 
         AItem *new_items = realloc(stack->items, sizeof(*new_items) * new_capacity);
         if (new_items == NULL) {
-            return;
+            return false;
         }
         stack->items = new_items;
         stack->capacity = new_capacity;
     }
     stack->items[stack->size] = value;
     stack->size++;
+
+    return true;
 }
-AItem a_pop(AStack *stack)
+bool a_pop(AStack *stack, int *value)
 {
-    if (a_is_empty(stack)) {
-        return 0;
+    if (a_is_empty(stack) || value == NULL) {
+        return false;
     }
     stack->size--;
+    *value = stack->items[stack->size];
 
-    return stack->items[stack->size];
+    return true;
 }
-AItem a_peek(AStack *stack)
+bool a_peek(AStack *stack, int *value)
 {
-    if (a_is_empty(stack)) {
-        return 0;
+    if (a_is_empty(stack) || value == NULL) {
+        return false;
     }
+    *value = stack->items[stack->size - 1];
 
-    return stack->items[stack->size - 1];
+    return true;
 }
 size_t a_size(AStack *stack)
 {
-    return stack ? stack->size : 0;
+    return stack != NULL ? stack->size : 0;
 }
 bool a_is_empty(AStack *stack)
 {

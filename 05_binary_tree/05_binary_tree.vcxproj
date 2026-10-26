@@ -129,7 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="array_binary_tree.c" />
-    <ClCompile Include="binary_tree_main.c" />
+    <ClCompile Include="main_binary_tree.c" />
     <ClCompile Include="linked_binary_tree.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

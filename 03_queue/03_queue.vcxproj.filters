@@ -18,7 +18,7 @@
     <ClCompile Include="circular_queue.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="queue_main.c">
+    <ClCompile Include="main_queue.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="linked_queue.c">

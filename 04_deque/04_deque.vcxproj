@@ -126,7 +126,7 @@
   <ItemGroup>
     <ClCompile Include="circular_deque.c" />
     <ClCompile Include="linked_deque.c" />
-    <ClCompile Include="deque_main.c" />
+    <ClCompile Include="main_deque.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="circular_deque.h" />

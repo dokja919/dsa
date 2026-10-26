@@ -109,7 +109,7 @@ void cdl_test(void)
 
     cdl_print(list);
 
-    if (cdl_get(list, 3, &value)) {
+    if (cdl_get_at(list, 3, &value)) {
         printf("Get [3]: %d\n", value);
     }
     if (cdl_delete_at(list, 3, &value)) {

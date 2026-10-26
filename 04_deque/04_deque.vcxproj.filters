@@ -21,7 +21,7 @@
     <ClCompile Include="linked_deque.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="deque_main.c">
+    <ClCompile Include="main_deque.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

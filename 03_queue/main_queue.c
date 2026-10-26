@@ -4,15 +4,21 @@
 
 void c_test(void)
 {
+    int value;
     CQueue *queue = c_create();
-
+    if (queue == NULL) {
+        return;
+    }
     for (int i = 0; i < 16; i++) {
         c_enqueue(queue, i);
     }
-    printf("size: %zu, Front: %d\n", c_size(queue), c_peek(queue));
-
+    if (c_peek(queue, &value)) {
+        printf("size: %zu, Front: %d\n", c_size(queue), value);
+    }
     while (c_is_empty(queue) == false) {
-        printf("Dequeue: %d\n", c_dequeue(queue));
+        if (c_dequeue(queue, &value)) {
+            printf("Dequeue: %d\n", value);
+        }
     }
     c_destroy(queue);
 }

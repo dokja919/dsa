@@ -5,27 +5,28 @@
 
 void a_test(void)
 {
+    int value;
     AStack *stack = a_create();
-
+    if (stack == NULL) {
+        return;
+    }
     a_push(stack, 3);
     a_push(stack, 37);
     a_push(stack, 11);
     a_push(stack, 12);
-
-    printf(
-        "size: %zu, Top: %d\n",
-        a_size(stack),
-        a_peek(stack));
-
-    while (a_is_empty(stack) == false) {
-        printf("Popped: %d\n", a_pop(stack));
+    if (a_peek(stack, &value)) {
+        printf("size: %zu, Top: %d\n", a_size(stack), value);
     }
 
+    while (a_is_empty(stack) == false) {
+        if (a_pop(stack, &value)) {
+            printf("Popped: %d\n", value);
+        }
+    }
     printf("stack Is Empty.\n");
 
     a_destroy(stack);
 }
-
 void l_test(void)
 {
     LStack *stack = l_create();
@@ -35,10 +36,7 @@ void l_test(void)
     l_push(stack, 30);
     l_push(stack, 40);
 
-    printf(
-        "size: %zu, Top: %d\n\n",
-        l_size(stack),
-        l_top(stack));
+    printf("size: %zu, Top: %d\n\n", l_size(stack), l_top(stack));
 
     while (l_is_empty(stack) == false) {
         printf("Popped: %d\n", l_pop(stack));
@@ -51,7 +49,7 @@ void l_test(void)
 
 int main(void)
 {
-    int stack_number = 1;
+    int stack_number = 0;
 
     switch (stack_number) {
     case 0:

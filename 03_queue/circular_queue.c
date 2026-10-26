@@ -1,7 +1,7 @@
 #include "circular_queue.h"
 #include <stdlib.h>
 
-#define INITIAL_CAPACITY 8
+#define INITIAL_CAPACITY 8 // 16
 
 struct CircularQueue {
     CItem *items;
@@ -16,7 +16,6 @@ CQueue *c_create(void)
     if (queue == NULL) {
         return NULL;
     }
-
     queue->capacity = INITIAL_CAPACITY;
     queue->items = malloc(sizeof(*queue->items) * queue->capacity);
     if (queue->items == NULL) {
@@ -36,16 +35,17 @@ void c_destroy(CQueue *queue)
     free(queue->items);
     free(queue);
 }
-void c_enqueue(CQueue *queue, int value)
+bool c_enqueue(CQueue *queue, int value)
 {
     if (queue == NULL) {
-        return;
+        return false;
     }
     if (queue->size == queue->capacity) {
         size_t new_capacity = queue->capacity * 2;
+
         CItem *new_items = malloc(sizeof(*new_items) * new_capacity);
         if (new_items == NULL) {
-            return;
+            return false;
         }
         for (size_t i = 0; i < queue->size; i++) {
             size_t j = (queue->front + i) % queue->capacity;
@@ -59,29 +59,34 @@ void c_enqueue(CQueue *queue, int value)
     size_t rear = (queue->front + queue->size) % queue->capacity;
     queue->items[rear] = value;
     queue->size++;
+
+    return true;
 }
-CItem c_dequeue(CQueue *queue)
+bool c_dequeue(CQueue *queue, int *value)
 {
-    if (c_is_empty(queue)) {
-        return 0;
+    if (c_is_empty(queue) || value == NULL) {
+        return false;
     }
-    CItem data = queue->items[queue->front];
+    *value = queue->items[queue->front];
     queue->front = (queue->front + 1) % queue->capacity;
     queue->size--;
-    return data;
+
+    return true;
 }
-CItem c_peek(CQueue *queue)
+bool c_peek(CQueue *queue, int *value)
 {
-    if (c_is_empty(queue)) {
-        return 0;
+    if (c_is_empty(queue) || value == NULL) {
+        return false;
     }
-    return queue->items[queue->front];
+    *value = queue->items[queue->front];
+
+    return true;
+}
+size_t c_size(CQueue *queue)
+{
+    return queue != NULL ? queue->size : 0;
 }
 bool c_is_empty(CQueue *queue)
 {
     return queue == NULL || queue->size == 0;
-}
-size_t c_size(CQueue *queue)
-{
-    return queue ? queue->size : 0;
 }

@@ -129,7 +129,7 @@
     <ClCompile Include="circular_linked_list.c" />
     <ClCompile Include="doubly_linked_list.c" />
     <ClCompile Include="singly_linked_list.c" />
-    <ClCompile Include="list_main.c" />
+    <ClCompile Include="main_list.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="array_list.h" />
