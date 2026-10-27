@@ -46,15 +46,15 @@ size_t sc_hash(int key)
 {
     return (size_t)(((key % SC_CAPACITY) + SC_CAPACITY) % SC_CAPACITY);
 }
-bool sc_insert(SCHashTable *table, int key)
+bool sc_insert(SCHashTable *table, SCItem data)
 {
     if (table == NULL) {
         return false;
     }
-    size_t index = sc_hash(key);
+    size_t index = sc_hash(data.key);
 
     for (SCNode *current = table->buckets[index]; current != NULL; current = current->next) {
-        if (current->data.key == key) {
+        if (current->data.key == data.key) {
             return false;
         }
     }
@@ -62,33 +62,34 @@ bool sc_insert(SCHashTable *table, int key)
     if (new_node == NULL) {
         return false;
     }
-    new_node->data.key = key;
+    new_node->data = data;
     new_node->next = table->buckets[index];
     table->buckets[index] = new_node;
 
     return true;
 }
-bool sc_delete(SCHashTable *table, int key)
+bool sc_delete(SCHashTable *table, int key, SCItem *data)
 {
-    if (table == NULL) {
+    if (table == NULL || data == NULL) {
         return false;
     }
     size_t index = sc_hash(key);
     SCNode *prev = NULL;
-    SCNode *current = table->buckets[index];
+    SCNode *target = table->buckets[index];
 
-    while (current != NULL) {
-        if (current->data.key == key) {
+    while (target != NULL) {
+        if (target->data.key == key) {
             if (prev == NULL) {
-                table->buckets[index] = current->next;
+                table->buckets[index] = target->next;
             } else {
-                prev->next = current->next;
+                prev->next = target->next;
             }
-            free(current);
+            *data = target->data;
+            free(target);
             return true;
         }
-        prev = current;
-        current = current->next;
+        prev = target;
+        target = target->next;
     }
     return false;
 }
@@ -107,3 +108,13 @@ bool sc_search(SCHashTable *table, int key, SCItem *data)
     }
     return false;
 }
+// void printBuckets(void)
+//{
+//     for (int i = 0; i < CAPACITY; i++) {
+//         printf("bucket %d:", i);
+//         for (Entry *e = buckets[i]; e != NULL; e = e->next) {
+//             printf(" (%s=%d)", e->key, e->value);
+//         }
+//         printf("\n");
+//     }
+// }
