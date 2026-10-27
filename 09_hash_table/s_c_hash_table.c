@@ -9,20 +9,13 @@ typedef struct SCNode {
 } SCNode;
 
 struct SCHashTable {
-    SCNode **buckets;
+    SCNode *buckets[SC_CAPACITY];
 };
 
 SCHashTable *sc_create(void)
 {
-    SCHashTable *table = malloc(sizeof(*table));
-    if (table == NULL) {
-        return NULL;
-    }
-    table->buckets = calloc(SC_CAPACITY, sizeof(*table->buckets));
-    if (table->buckets == NULL) {
-        free(table);
-        return NULL;
-    }
+    SCHashTable *table = calloc(1, sizeof(*table));
+
     return table;
 }
 void sc_destroy(SCHashTable *table)
@@ -39,12 +32,27 @@ void sc_destroy(SCHashTable *table)
             current = next;
         }
     }
-    free(table->buckets);
     free(table);
 }
 size_t sc_hash(int key)
 {
-    return (size_t)(((key % SC_CAPACITY) + SC_CAPACITY) % SC_CAPACITY);
+    int remainder = key % SC_CAPACITY;
+
+    if (remainder < 0) {
+        remainder += SC_CAPACITY;
+    }
+    return (size_t)remainder;
+}
+static SCNode *sc_node_create(SCItem data)
+{
+    SCNode *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+
+    return new_node;
 }
 bool sc_insert(SCHashTable *table, SCItem data)
 {
@@ -58,11 +66,10 @@ bool sc_insert(SCHashTable *table, SCItem data)
             return false;
         }
     }
-    SCNode *new_node = malloc(sizeof(*new_node));
+    SCNode *new_node = sc_node_create(data);
     if (new_node == NULL) {
         return false;
     }
-    new_node->data = data;
     new_node->next = table->buckets[index];
     table->buckets[index] = new_node;
 

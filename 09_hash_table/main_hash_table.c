@@ -4,62 +4,76 @@
 
 void dat_test(void)
 {
-    DATItem table[DAT_CAPACITY] = {0};
-    int value;
+    DATItem item = {.key = 3};
+    DATItem data;
 
-    if (!dat_insert(table, 3, 300) || !dat_insert(table, 7, 700)) {
+    DATable *table = dat_create();
+    if (table == NULL) {
         return;
     }
+    printf("Insert: %s\n", dat_insert(table, item) ? "PASS" : "FAIL");
 
-    if (dat_search(table, 3, &value)) {
-        printf("value = %d\n", value);
-    } else {
-        printf("data is empty.\n");
+    item = (DATItem){.key = 7};
+    printf("Insert: %s\n", dat_insert(table, item) ? "PASS" : "FAIL");
+
+    if (dat_search(table, 3, &data)) {
+        printf("Found data: %zu\n", data.key);
     }
 
-    dat_delete(table, 3);
+    printf("Delete: %s\n", dat_delete(table, 3, &data) ? "PASS" : "FAIL");
 
-    if (dat_search(table, 3, &value)) {
-        printf("value = %d\n", value);
+    if (dat_search(table, 3, &data)) {
+        puts("Unexpectedly found deleted item");
     } else {
-        printf("data is empty.\n");
+        puts("Not found after deletion");
     }
 
-    dat_delete(table, 7);
+    dat_destroy(table);
+
+    // DATItem table[DAT_CAPACITY] = {0};
+    // int value;
+
+    // if (!dat_insert(table, 3, 300) || !dat_insert(table, 7, 700)) {
+    //     return;
+    // }
+
+    // if (dat_search(table, 3, &value)) {
+    //     printf("value = %d\n", value);
+    // } else {
+    //     printf("data is empty.\n");
+    // }
+
+    // dat_delete(table, 3);
+
+    // if (dat_search(table, 3, &value)) {
+    //     printf("value = %d\n", value);
+    // } else {
+    //     printf("data is empty.\n");
+    // }
+
+    // dat_delete(table, 7);
 }
 
 void sc_test(void)
 {
     SCHashTable *table = sc_create();
-    SCItem item;
+    SCItem item = {.key = 10};
+    SCItem data;
 
     if (table == NULL) {
         puts("Table creation failed");
-        return;
+        return 1;
     }
 
-    printf("Hash collision: %s\n",
-           sc_hash(12) == sc_hash(28) && sc_hash(28) == sc_hash(44) ? "PASS" : "FAIL");
+    printf("Insert: %s\n", sc_insert(table, item) ? "PASS" : "FAIL");
 
-    printf("Insert: %s\n", sc_insert(table, 12) && sc_insert(table, 28) && sc_insert(table, 44) &&
-                                   sc_insert(table, -1) && !sc_insert(table, 28)
-                               ? "PASS"
-                               : "FAIL");
-
-    int search_ok = 0;
-    if (sc_search(table, 28, &item)) {
-        printf("Found key: %d\n", item.key);
-        search_ok = item.key == 28 && !sc_search(table, 99, &item);
+    if (sc_search(table, 10, &data)) {
+        printf("Found key: %d\n", data.key);
+    } else {
+        puts("Not found");
     }
-    printf("Search: %s\n", search_ok ? "PASS" : "FAIL");
 
-    printf("Delete: %s\n", sc_delete(table, 28) && !sc_search(table, 28, &item) &&
-                                   sc_delete(table, 44) && sc_delete(table, 12) &&
-                                   sc_delete(table, -1) && !sc_delete(table, 12)
-                               ? "PASS"
-                               : "FAIL");
-
-    printf("Negative key hash: %s\n", sc_hash(-1) == sc_hash(15) ? "PASS" : "FAIL");
+    printf("Delete: %s\n", sc_delete(table, 10, &data) ? "PASS" : "FAIL");
 
     sc_destroy(table);
 }

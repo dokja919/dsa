@@ -4,16 +4,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define DAT_CAPACITY 16
-
 typedef struct DATItem {
     size_t key;
-    int value;
     bool occupied;
 } DATItem;
+typedef struct DATable DATable;
 
-bool dat_insert(DATItem table[], size_t key, int value);
-bool dat_search(DATItem table[], size_t key, int *value);
-bool dat_delete(DATItem table[], size_t key);
+DATable *dat_create(void);
+void dat_destroy(DATable *table);
+bool dat_insert(DATItem *table, DATItem data);
+bool dat_delete(DATItem *table, size_t key, DATItem *data);
+bool dat_search(DATItem *table, size_t key, DATItem *data);
 
 #endif
