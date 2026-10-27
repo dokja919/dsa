@@ -96,7 +96,7 @@ void dl_test(void)
 }
 void cdl_test(void)
 {
-    int value;
+    CDLItem data;
     CDLList *list = cdl_create();
     if (list == NULL) {
         return;
@@ -109,11 +109,11 @@ void cdl_test(void)
 
     cdl_print(list);
 
-    if (cdl_get_at(list, 3, &value)) {
-        printf("Get [3]: %d\n", value);
+    if (cdl_get_at(list, 3, &data)) {
+        printf("Get [3]: %d\n", data);
     }
-    if (cdl_delete_at(list, 3, &value)) {
-        printf("Delete [3]: %d\n", value);
+    if (cdl_delete_at(list, 3, &data)) {
+        printf("Delete [3]: %d\n", data);
     }
 
     cdl_print(list);
@@ -124,7 +124,6 @@ void cdl_test(void)
 int main(void)
 {
     int list_number = 4;
-
     switch (list_number) {
     case 0:
         a_test();

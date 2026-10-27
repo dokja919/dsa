@@ -35,7 +35,7 @@ void c_destroy(CQueue *queue)
     free(queue->items);
     free(queue);
 }
-bool c_enqueue(CQueue *queue, int value)
+bool c_enqueue(CQueue *queue, CItem data)
 {
     if (queue == NULL) {
         return false;
@@ -57,28 +57,28 @@ bool c_enqueue(CQueue *queue, int value)
         queue->front = 0;
     }
     size_t rear = (queue->front + queue->size) % queue->capacity;
-    queue->items[rear] = value;
+    queue->items[rear] = data;
     queue->size++;
 
     return true;
 }
-bool c_dequeue(CQueue *queue, int *value)
+bool c_dequeue(CQueue *queue, CItem *data)
 {
-    if (c_is_empty(queue) || value == NULL) {
+    if (c_is_empty(queue) || data == NULL) {
         return false;
     }
-    *value = queue->items[queue->front];
+    *data = queue->items[queue->front];
     queue->front = (queue->front + 1) % queue->capacity;
     queue->size--;
 
     return true;
 }
-bool c_peek(CQueue *queue, int *value)
+bool c_peek(CQueue *queue, CItem *data)
 {
-    if (c_is_empty(queue) || value == NULL) {
+    if (c_is_empty(queue) || data == NULL) {
         return false;
     }
-    *value = queue->items[queue->front];
+    *data = queue->items[queue->front];
 
     return true;
 }

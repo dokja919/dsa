@@ -33,7 +33,7 @@ void a_destroy(AStack *stack)
     free(stack->items);
     free(stack);
 }
-bool a_push(AStack *stack, int value)
+bool a_push(AStack *stack, AItem data)
 {
     if (stack == NULL) {
         return false;
@@ -48,27 +48,27 @@ bool a_push(AStack *stack, int value)
         stack->items = new_items;
         stack->capacity = new_capacity;
     }
-    stack->items[stack->size] = value;
+    stack->items[stack->size] = data;
     stack->size++;
 
     return true;
 }
-bool a_pop(AStack *stack, int *value)
+bool a_pop(AStack *stack, AItem *data)
 {
-    if (a_is_empty(stack) || value == NULL) {
+    if (a_is_empty(stack) || data == NULL) {
         return false;
     }
     stack->size--;
-    *value = stack->items[stack->size];
+    *data = stack->items[stack->size];
 
     return true;
 }
-bool a_peek(AStack *stack, int *value)
+bool a_peek(AStack *stack, AItem *data)
 {
-    if (a_is_empty(stack) || value == NULL) {
+    if (a_is_empty(stack) || data == NULL) {
         return false;
     }
-    *value = stack->items[stack->size - 1];
+    *data = stack->items[stack->size - 1];
 
     return true;
 }

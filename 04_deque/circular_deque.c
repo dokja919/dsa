@@ -54,7 +54,7 @@ static bool c_ensure_capacity(CDeque *deque)
 
     return true;
 }
-bool c_push_back(CDeque *deque, int value)
+bool c_push_back(CDeque *deque, CItem data)
 {
     if (deque == NULL) {
         return false;
@@ -65,12 +65,12 @@ bool c_push_back(CDeque *deque, int value)
         }
     }
     size_t back = (deque->front + deque->size) % deque->capacity;
-    deque->items[back] = value;
+    deque->items[back] = data;
     deque->size++;
 
     return true;
 }
-bool c_push_front(CDeque *deque, int value)
+bool c_push_front(CDeque *deque, CItem data)
 {
     if (deque == NULL) {
         return false;
@@ -81,49 +81,49 @@ bool c_push_front(CDeque *deque, int value)
         }
     }
     deque->front = (deque->capacity + deque->front - 1) % deque->capacity;
-    deque->items[deque->front] = value;
+    deque->items[deque->front] = data;
     deque->size++;
 
     return true;
 }
-bool c_pop_back(CDeque *deque, int *value)
+bool c_pop_back(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || value == NULL) {
+    if (c_is_empty(deque) || data == NULL) {
         return false;
     }
     size_t back = (deque->front + deque->size - 1) % deque->capacity;
-    *value = deque->items[back];
+    *data = deque->items[back];
     deque->size--;
 
     return true;
 }
-bool c_pop_front(CDeque *deque, int *value)
+bool c_pop_front(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || value == NULL) {
+    if (c_is_empty(deque) || data == NULL) {
         return false;
     }
-    *value = deque->items[deque->front];
+    *data = deque->items[deque->front];
     deque->front = (deque->front + 1) % deque->capacity;
     deque->size--;
 
     return true;
 }
-bool c_front(CDeque *deque, int *value)
+bool c_front(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || value == NULL) {
+    if (c_is_empty(deque) || data == NULL) {
         return false;
     }
-    *value = deque->items[deque->front];
+    *data = deque->items[deque->front];
 
     return true;
 }
-bool c_back(CDeque *deque, int *value)
+bool c_back(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || value == NULL) {
+    if (c_is_empty(deque) || data == NULL) {
         return false;
     }
     size_t back = (deque->front + deque->size - 1) % deque->capacity;
-    *value = deque->items[back];
+    *data = deque->items[back];
 
     return true;
 }

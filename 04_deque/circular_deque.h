@@ -9,12 +9,12 @@ typedef struct CircularDeque CDeque;
 
 CDeque *c_create(void);
 void c_destroy(CDeque *deque);
-bool c_push_back(CDeque *deque, int value);
-bool c_push_front(CDeque *deque, int value);
-bool c_pop_back(CDeque *deque, int *value);
-bool c_pop_front(CDeque *deque, int *value);
-bool c_front(CDeque *deque, int *value);
-bool c_back(CDeque *deque, int *value);
+bool c_push_back(CDeque *deque, CItem data);
+bool c_push_front(CDeque *deque, CItem data);
+bool c_pop_back(CDeque *deque, CItem *data);
+bool c_pop_front(CDeque *deque, CItem *data);
+bool c_front(CDeque *deque, CItem *data);
+bool c_back(CDeque *deque, CItem *data);
 bool c_is_empty(CDeque *deque);
 size_t c_size(CDeque *deque);
 

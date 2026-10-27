@@ -5,7 +5,7 @@
 
 void a_test(void)
 {
-    int value;
+    AItem value;
     AStack *stack = a_create();
     if (stack == NULL) {
         return;

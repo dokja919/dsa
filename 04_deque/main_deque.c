@@ -4,7 +4,7 @@
 
 void c_test(void)
 {
-    int value;
+    CItem data;
     CDeque *deque = c_create();
     if (deque == NULL) {
         return;
@@ -12,26 +12,26 @@ void c_test(void)
     for (int i = 0; i < 8; i++) {
         c_push_front(deque, i);
     }
-    if (c_front(deque, &value)) {
-        printf("size: %zu, Front: %d\n", c_size(deque), value);
+    if (c_front(deque, &data)) {
+        printf("size: %zu, Front: %d\n", c_size(deque), data);
     }
     for (int i = 8; i < 16; i++) {
         c_push_back(deque, i);
     }
-    if (c_back(deque, &value)) {
-        printf("size: %zu, back: %d\n", c_size(deque), value);
+    if (c_back(deque, &data)) {
+        printf("size: %zu, back: %d\n", c_size(deque), data);
     }
     for (size_t i = 0; i < 8; i++) {
-        if (c_pop_front(deque, &value)) {
-            printf("popped front: %d\n", value);
+        if (c_pop_front(deque, &data)) {
+            printf("popped front: %d\n", data);
         }
     }
-    if (c_back(deque, &value)) {
-        printf("size: %zu, back: %d\n", c_size(deque), value);
+    if (c_back(deque, &data)) {
+        printf("size: %zu, back: %d\n", c_size(deque), data);
     }
     for (size_t i = 0; i < 8; i++) {
-        if (c_pop_back(deque, &value)) {
-            printf("popped back: %d\n", value);
+        if (c_pop_back(deque, &data)) {
+            printf("popped back: %d\n", data);
         }
     }
     c_destroy(deque);

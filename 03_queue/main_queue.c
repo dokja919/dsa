@@ -4,7 +4,7 @@
 
 void c_test(void)
 {
-    int value;
+    CItem data;
     CQueue *queue = c_create();
     if (queue == NULL) {
         return;
@@ -12,12 +12,12 @@ void c_test(void)
     for (int i = 0; i < 16; i++) {
         c_enqueue(queue, i);
     }
-    if (c_peek(queue, &value)) {
-        printf("size: %zu, Front: %d\n", c_size(queue), value);
+    if (c_peek(queue, &data)) {
+        printf("size: %zu, Front: %d\n", c_size(queue), data);
     }
     while (c_is_empty(queue) == false) {
-        if (c_dequeue(queue, &value)) {
-            printf("Dequeue: %d\n", value);
+        if (c_dequeue(queue, &data)) {
+            printf("Dequeue: %d\n", data);
         }
     }
     c_destroy(queue);

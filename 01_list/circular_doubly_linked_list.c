@@ -13,13 +13,13 @@ struct CircularDoublyLinkedList {
     size_t size;
 };
 
-static CDLNode *cdl_node_create(int value)
+static CDLNode *cdl_node_create(CDLItem data)
 {
     CDLNode *new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
         return NULL;
     }
-    new_node->data = value;
+    new_node->data = data;
     new_node->prev = NULL;
     new_node->next = NULL;
 
@@ -60,12 +60,12 @@ static bool node_valid(CDLList *list, CDLNodeHandle node)
 {
     return list != NULL && node != NULL && node != list->sentinel;
 }
-bool cdl_insert_before(CDLList *list, CDLNodeHandle next, int value)
+bool cdl_insert_before(CDLList *list, CDLNodeHandle next, CDLItem data)
 {
     if (node_valid(list, next) == false) {
         return false;
     }
-    CDLNode *new_node = cdl_node_create(value);
+    CDLNode *new_node = cdl_node_create(data);
     if (new_node == NULL) {
         return false;
     }
@@ -77,12 +77,12 @@ bool cdl_insert_before(CDLList *list, CDLNodeHandle next, int value)
 
     return true;
 }
-bool cdl_delete(CDLList *list, CDLNodeHandle target, int *value)
+bool cdl_delete(CDLList *list, CDLNodeHandle target, CDLItem *data)
 {
-    if (node_valid(list, target) == false || value == NULL) {
+    if (node_valid(list, target) == false || data == NULL) {
         return false;
     }
-    *value = target->data;
+    *data = target->data;
     target->prev->next = target->next;
     target->next->prev = target->prev;
 
@@ -91,31 +91,31 @@ bool cdl_delete(CDLList *list, CDLNodeHandle target, int *value)
 
     return true;
 }
-bool cdl_get(CDLList *list, CDLNodeHandle node, int *value)
+bool cdl_get(CDLList *list, CDLNodeHandle node, CDLItem *data)
 {
-    if (node_valid(list, node) == false || value == NULL) {
+    if (node_valid(list, node) == false || data == NULL) {
         return false;
     }
-    *value = node->data;
+    *data = node->data;
 
     return true;
 }
-bool cdl_set(CDLList *list, CDLNodeHandle node, int value)
+bool cdl_set(CDLList *list, CDLNodeHandle node, CDLItem data)
 {
     if (node_valid(list, node) == false) {
         return false;
     }
-    node->data = value;
+    node->data = data;
 
     return true;
 }
-CDLNodeHandle cdl_find(CDLList *list, int value)
+CDLNodeHandle cdl_find(CDLList *list, CDLItem data)
 {
     if (list == NULL) {
         return NULL;
     }
     for (CDLNode *target = list->sentinel->next; target != list->sentinel; target = target->next) {
-        if (target->data == value) {
+        if (target->data == data) {
             return target;
         }
     }
@@ -139,12 +139,12 @@ static CDLNode *node_at(CDLList *list, size_t index)
     }
     return target;
 }
-bool cdl_insert_at(CDLList *list, size_t index, int value)
+bool cdl_insert_at(CDLList *list, size_t index, CDLItem data)
 {
     if (list == NULL || index > list->size) {
         return false;
     }
-    CDLNode *new_node = cdl_node_create(value);
+    CDLNode *new_node = cdl_node_create(data);
     if (new_node == NULL) {
         return false;
     }
@@ -160,9 +160,9 @@ bool cdl_insert_at(CDLList *list, size_t index, int value)
 
     return true;
 }
-bool cdl_delete_at(CDLList *list, size_t index, int *value)
+bool cdl_delete_at(CDLList *list, size_t index, CDLItem *data)
 {
-    if (list == NULL || index >= list->size || value == NULL) {
+    if (list == NULL || index >= list->size || data == NULL) {
         return false;
     }
     CDLNode *target = node_at(list, index);
@@ -170,18 +170,18 @@ bool cdl_delete_at(CDLList *list, size_t index, int *value)
     target->next->prev = target->prev;
     target->prev->next = target->next;
 
-    *value = target->data;
+    *data = target->data;
     free(target);
     list->size--;
 
     return true;
 }
-bool cdl_get_at(CDLList *list, size_t index, int *value)
+bool cdl_get_at(CDLList *list, size_t index, CDLItem *data)
 {
-    if (list == NULL || index >= list->size || value == NULL) {
+    if (list == NULL || index >= list->size || data == NULL) {
         return false;
     }
-    *value = node_at(list, index)->data;
+    *data = node_at(list, index)->data;
 
     return true;
 }
