@@ -11,9 +11,7 @@ void bs_test(void)
 
     for (int i = 0; i < 6; i++) {
         data.key = keys[i];
-        if (!bs_insert(os, data)) {
-            return;
-        }
+        bs_insert(os, data);
     }
     bs_print(os);
 
@@ -21,7 +19,9 @@ void bs_test(void)
         printf("key: %d\n", data.key);
     }
     printf("after removing 30: ");
-    bs_delete(os, 30);
+    if (bs_delete(os, 30, &data)) {
+        printf("data: %d\n", data.key);
+    }
     bs_print(os);
 
     bs_destroy(os);

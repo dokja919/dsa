@@ -100,15 +100,15 @@ static void bs_transplant(BSOrderedSet *tree, BSNode *parent, BSNode *old_child,
         parent->right = new_child;
     }
 }
-bool bs_delete(BSOrderedSet *tree, int key)
+bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
 {
-    if (tree == NULL) {
+    if (tree == NULL || data == NULL) {
         return false;
     }
-    ///////////
+    // 1. 삭제할 노드 탐색
     BSNode *target_parent = NULL;
     BSNode *target = tree->root;
-    while (target && target->data.key != key) {
+    while (target && key != target->data.key) {
         target_parent = target;
         if (key < target->data.key) {
             target = target->left;
@@ -119,26 +119,26 @@ bool bs_delete(BSOrderedSet *tree, int key)
     if (target == NULL) {
         return false;
     }
-    //////////////
+    *data = target->data;
+    // 2. 자식이 0개 또는 1개인 경우
     if (target->left == NULL || target->right == NULL) {
         BSNode *child = target->left ? target->left : target->right;
-
         bs_transplant(tree, target_parent, target, child);
         free(target);
         return true;
     }
-    ///////////
+    // 3. 두 자식이 있는 경우: 중위 후계자 탐색
     BSNode *succ_parent = target;
     BSNode *succ = target->right;
     while (succ->left != NULL) {
         succ_parent = succ;
         succ = succ->left;
     }
-    ///////////
     if (succ != target->right) {
         bs_transplant(tree, succ_parent, succ, succ->right);
         succ->right = target->right;
     }
+    // 4. 후계자를 삭제 위치에 연결
     bs_transplant(tree, target_parent, target, succ);
     succ->left = target->left;
     free(target);
@@ -147,7 +147,7 @@ bool bs_delete(BSOrderedSet *tree, int key)
 }
 bool bs_search(BSOrderedSet *tree, int key, BSItem *data)
 {
-    if (tree == NULL) {
+    if (tree == NULL || data == NULL) {
         return false;
     }
     BSNode *target = tree->root;

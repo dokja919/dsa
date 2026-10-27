@@ -12,7 +12,7 @@ typedef struct BinarySearchTree BSOrderedSet;
 BSOrderedSet *bs_create(void);
 void bs_destroy(BSOrderedSet *tree);
 bool bs_insert(BSOrderedSet *tree, BSItem data);
-bool bs_delete(BSOrderedSet *tree, int key);
+bool bs_delete(BSOrderedSet *tree, int key, BSItem *data);
 bool bs_search(BSOrderedSet *tree, int key, BSItem *data);
 void bs_print(BSOrderedSet *tree);
 
