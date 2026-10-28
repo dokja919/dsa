@@ -8,17 +8,17 @@ typedef struct SCNode {
     struct SCNode *next;
 } SCNode;
 
-struct SCHashTable {
+struct SeparateChainingHashTable {
     SCNode *buckets[SC_CAPACITY];
 };
 
-SCHashTable *sc_create(void)
+SCSet *sc_create(void)
 {
-    SCHashTable *table = calloc(1, sizeof(*table));
+    SCSet *table = calloc(1, sizeof(*table));
 
     return table;
 }
-void sc_destroy(SCHashTable *table)
+void sc_destroy(SCSet *table)
 {
     if (table == NULL) {
         return;
@@ -54,7 +54,7 @@ static SCNode *sc_node_create(SCItem data)
 
     return new_node;
 }
-bool sc_insert(SCHashTable *table, SCItem data)
+bool sc_insert(SCSet *table, SCItem data)
 {
     if (table == NULL) {
         return false;
@@ -63,7 +63,8 @@ bool sc_insert(SCHashTable *table, SCItem data)
 
     for (SCNode *current = table->buckets[index]; current != NULL; current = current->next) {
         if (current->data.key == data.key) {
-            return false;
+            current->data = data;
+            return true;
         }
     }
     SCNode *new_node = sc_node_create(data);
@@ -75,7 +76,7 @@ bool sc_insert(SCHashTable *table, SCItem data)
 
     return true;
 }
-bool sc_delete(SCHashTable *table, int key, SCItem *data)
+bool sc_delete(SCSet *table, int key, SCItem *data)
 {
     if (table == NULL || data == NULL) {
         return false;
@@ -100,7 +101,7 @@ bool sc_delete(SCHashTable *table, int key, SCItem *data)
     }
     return false;
 }
-bool sc_search(SCHashTable *table, int key, SCItem *data)
+bool sc_search(SCSet *table, int key, SCItem *data)
 {
     if (table == NULL || data == NULL) {
         return false;

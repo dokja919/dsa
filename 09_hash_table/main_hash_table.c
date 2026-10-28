@@ -4,7 +4,7 @@
 
 void dat_test(void)
 {
-    DATable *table = dat_create();
+    DATSet *table = dat_create();
     if (table == NULL) {
         return;
     }
@@ -25,7 +25,7 @@ void dat_test(void)
 }
 void sc_test(void)
 {
-    SCHashTable *table = sc_create();
+    SCSet *table = sc_create();
     if (table == NULL) {
         return;
     }

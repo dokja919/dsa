@@ -4,15 +4,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef struct DATItem {
+typedef struct {
     size_t key;
 } DATItem;
-typedef struct DATable DATable;
+typedef struct DirectAddressTable DATSet;
 
-DATable *dat_create(void);
-void dat_destroy(DATable *table);
-bool dat_insert(DATable *table, DATItem data);
-bool dat_delete(DATable *table, size_t key, DATItem *data);
-bool dat_search(DATable *table, size_t key, DATItem *data);
+DATSet *dat_create(void);
+void dat_destroy(DATSet *table);
+bool dat_insert(DATSet *table, DATItem data);
+bool dat_delete(DATSet *table, size_t key, DATItem *data);
+bool dat_search(DATSet *table, size_t key, DATItem *data);
 
 #endif
