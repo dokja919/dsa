@@ -6,7 +6,7 @@
 enum { DAT_CAPACITY = 16 };
 
 struct DATable {
-    DATItem items[DAT_CAPACITY];
+    DATItem *items[DAT_CAPACITY];
 };
 
 DATable *dat_create(void)
@@ -20,33 +20,47 @@ void dat_destroy(DATable *table)
     if (table == NULL) {
         return;
     }
+    for (size_t i = 0; i < DAT_CAPACITY; i++) {
+        free(table->items[i]);
+    }
     free(table);
 }
-bool dat_insert(DATItem table[], DATItem data)
+bool dat_insert(DATable *table, DATItem data)
 {
     if (table == NULL || data.key >= DAT_CAPACITY) {
         return false;
     }
-    table[data.key] = data;
-    table[data.key].occupied = true;
+    if (table->items[data.key] != NULL) {
+        *table->items[data.key] = data;
+        return true;
+    }
+    DATItem *item = malloc(sizeof(*item));
+    if (item == NULL) {
+        return false;
+    }
+    *item = data;
+
+    table->items[data.key] = item;
 
     return true;
 }
-bool dat_search(DATItem table[], size_t key, DATItem *data)
+bool dat_search(DATable *table, size_t key, DATItem *data)
 {
-    if (table == NULL || data == NULL || key >= DAT_CAPACITY || !table[key].occupied) {
+    if (table == NULL || data == NULL || key >= DAT_CAPACITY || table->items[key] == NULL) {
         return false;
     }
-    *data = table[key];
+    *data = *table->items[key];
 
     return true;
 }
-bool dat_delete(DATItem table[], size_t key, DATItem *data)
+bool dat_delete(DATable *table, size_t key, DATItem *data)
 {
-    if (table == NULL || key >= DAT_CAPACITY || !table[key].occupied) {
+    if (table == NULL || data == NULL || key >= DAT_CAPACITY || table->items[key] == NULL) {
         return false;
     }
-    table[key].occupied = false;
+    *data = *table->items[key];
+    free(table->items[key]);
+    table->items[key] = NULL;
 
     return true;
 }

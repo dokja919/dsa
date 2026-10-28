@@ -6,14 +6,13 @@
 
 typedef struct DATItem {
     size_t key;
-    bool occupied;
 } DATItem;
 typedef struct DATable DATable;
 
 DATable *dat_create(void);
 void dat_destroy(DATable *table);
-bool dat_insert(DATItem *table, DATItem data);
-bool dat_delete(DATItem *table, size_t key, DATItem *data);
-bool dat_search(DATItem *table, size_t key, DATItem *data);
+bool dat_insert(DATable *table, DATItem data);
+bool dat_delete(DATable *table, size_t key, DATItem *data);
+bool dat_search(DATable *table, size_t key, DATItem *data);
 
 #endif
