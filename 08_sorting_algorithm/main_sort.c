@@ -67,84 +67,84 @@ void insertion_sort(int array[], size_t n)
     }
 }
 // Merge sort
-void merge(int array[], size_t begin, size_t middle, size_t end)
+void merge(int array[], size_t low, size_t mid, size_t high)
 {
-    size_t size = end - begin;
+    size_t size = high - low;
     int *buffer = malloc(size * sizeof(*buffer));
     if (buffer == NULL) {
         return;
     }
 
-    size_t left = begin;
-    size_t right = middle;
+    size_t i = low;
+    size_t j = mid;
 
-    size_t buffer_index = 0;
-    while (left < middle && right < end) {
-        if (array[left] <= array[right]) {
-            buffer[buffer_index++] = array[left++];
+    size_t index = 0;
+    while (i < mid && j < high) {
+        if (array[i] <= array[j]) {
+            buffer[index++] = array[i++];
         } else {
-            buffer[buffer_index++] = array[right++];
+            buffer[index++] = array[j++];
         }
     }
-    while (left < middle) {
-        buffer[buffer_index++] = array[left++];
+    while (i < mid) {
+        buffer[index++] = array[i++];
     }
-    while (right < end) {
-        buffer[buffer_index++] = array[right++];
+    while (j < high) {
+        buffer[index++] = array[j++];
     }
 
     for (size_t i = 0; i < size; i++) {
-        array[begin + i] = buffer[i];
+        array[low + i] = buffer[i];
     }
     free(buffer);
 }
-void merge_sort(int array[], size_t begin, size_t end)
+void merge_sort(int array[], size_t low, size_t high)
 {
-    if (array == NULL || end - begin < 2) {
+    if (array == NULL || high - low < 2) {
         return;
     }
-    size_t middle = (begin + end) / 2;
+    size_t middle = (low + high) / 2;
 
-    merge_sort(array, begin, middle);
-    merge_sort(array, middle, end);
-    merge(array, begin, middle, end);
+    merge_sort(array, low, middle);
+    merge_sort(array, middle, high);
+    merge(array, low, middle, high);
 }
 // Quick sort
-size_t partition(int array[], size_t begin, size_t end)
+size_t partition(int array[], size_t low, size_t high)
 {
-    int pivot_value = array[begin];
+    int pivot_value = array[low];
 
-    size_t left = begin;
-    size_t right = end;
+    size_t i = low;
+    size_t j = high;
     do {
         do {
-            left++;
-        } while (left < end - 1 && array[left] < pivot_value);
+            i++;
+        } while (i < high - 1 && array[i] < pivot_value);
 
         do {
-            right--;
-        } while (right >= left && array[right] > pivot_value);
+            j--;
+        } while (j >= i && array[j] > pivot_value);
 
-        if (left >= right) {
+        if (i >= j) {
             break;
         }
-        swap(&array[left], &array[right]);
+        swap(&array[i], &array[j]);
 
-    } while (left < right);
+    } while (i < j);
 
-    swap(&array[begin], &array[right]);
+    swap(&array[low], &array[j]);
 
-    return right;
+    return j;
 }
-void quick_sort(int array[], size_t begin, size_t end)
+void quick_sort(int array[], size_t low, size_t high)
 {
-    if (array == NULL || end - begin < 2) {
+    if (array == NULL || high - low < 2) {
         return;
     }
-    size_t pivot_index = partition(array, begin, end);
+    size_t pivot_index = partition(array, low, high);
 
-    quick_sort(array, begin, pivot_index);
-    quick_sort(array, pivot_index + 1, end);
+    quick_sort(array, low, pivot_index);
+    quick_sort(array, pivot_index + 1, high);
 }
 // Heap sort
 void heapify(int array[], size_t n, size_t root)

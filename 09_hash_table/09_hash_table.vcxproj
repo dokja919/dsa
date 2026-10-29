@@ -22,7 +22,6 @@
     <ClCompile Include="direct_address_table.c" />
     <ClCompile Include="main_hash_table.c" />
     <ClCompile Include="s_c_hash_table.c" />
-    <ClCompile Include="sc4.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="direct_address_table.h" />
