@@ -112,18 +112,17 @@ void merge_sort(int array[], size_t low, size_t high)
 // Quick sort
 size_t partition(int array[], size_t low, size_t high)
 {
-    int pivot_value = array[low];
-
+    int pivot = array[low];
     size_t i = low;
     size_t j = high;
     do {
         do {
             i++;
-        } while (i < high - 1 && array[i] < pivot_value);
+        } while (i < j - 1 && array[i] < pivot);
 
         do {
             j--;
-        } while (j >= i && array[j] > pivot_value);
+        } while (array[j] > pivot);
 
         if (i >= j) {
             break;
@@ -373,7 +372,7 @@ int main()
     // int values[] = {3, 3};
     size_t n = sizeof(values) / sizeof(*values);
 
-    size_t sort_number = 8;
+    size_t sort_number = 4;
 
     switch (sort_number) {
     case 0:
