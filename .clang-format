@@ -10,11 +10,14 @@ BraceWrapping:
   AfterFunction: true
   AfterControlStatement: Never
 
+# Treat C-style brace initializers as blocks rather than function-call arguments
+Cpp11BracedListStyle: false
+
 # Pointers
 PointerAlignment: Right
 
 # Line Length
-ColumnLimit: 100
+ColumnLimit: 0
 
 # Short Functions
 AllowShortFunctionsOnASingleLine: None
