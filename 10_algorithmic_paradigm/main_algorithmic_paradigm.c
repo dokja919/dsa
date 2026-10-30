@@ -3,40 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void merge(int array[], int buffer[], size_t left, size_t mid, size_t right)
-{
-    size_t index = left;
-    size_t a = left;
-    size_t b = mid;
-
-    while (a < mid && b < right) {
-        if (array[a] <= array[b]) {
-            buffer[index++] = array[a++];
-        } else {
-            buffer[index++] = array[b++];
-        }
-    }
-    while (a < mid) {
-        buffer[index++] = array[a++];
-    }
-    while (b < right) {
-        buffer[index++] = array[b++];
-    }
-    for (size_t i = left; i < right; i++) {
-        array[i] = buffer[i];
-    }
-}
-void merge_sort(int array[], int buffer[], size_t left, size_t right)
-{
-    if (array == NULL || buffer == NULL || right <= left || right - left <= 1) {
-        return;
-    }
-    size_t mid = left + (right - left) / 2;
-
-    merge_sort(array, buffer, left, mid);
-    merge_sort(array, buffer, mid, right);
-    merge(array, buffer, left, mid, right);
-}
 void print_array(int array[], size_t n)
 {
     for (size_t i = 0; i < n; i++) {
@@ -44,49 +10,52 @@ void print_array(int array[], size_t n)
     }
     printf("\n");
 }
-bool divide_and_conquer(int array[], size_t n)
+bool binary_search(int arr[], size_t n, int key, size_t *index)
 {
-    if (array == NULL) {
-        return false;
-    }
-    if (n <= 1) {
-        print_array(array, n);
-        return true;
-    }
-    int *buffer = malloc(sizeof(*buffer) * n);
-    if (buffer == NULL) {
-        return false;
-    }
-    merge_sort(array, buffer, 0, n);
-    print_array(array, n);
-    free(buffer);
+    size_t i = 0;
+    size_t j = n;
 
-    return true;
+    while (i < j) {
+        size_t mid = i + (j - i) / 2;
+
+        if (arr[mid] == key) {
+            *index = mid;
+            return true;
+        } else if (key < arr[mid]) {
+            j = mid;
+        } else {
+            i = mid + 1;
+        }
+    }
+    return false;
+}
+void divide_and_conquer(void)
+{
+    int arr[] = {1, 3, 5, 7, 9, 11, 13};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t index;
+
+    if (binary_search(arr, size, 7, &index)) {
+        printf("index: %zu\n", index);
+    }
 }
 void greedy_algorithm(void)
 {
 }
-
-/* 동적 프로그래밍 구현 위치: 상태, 점화식, 초기값 등을 정한 뒤 코드를 추가하세요. */
 void dynamic_programming(void)
 {
 }
-
-/* 백트래킹 구현 위치: 탐색 상태와 종료 조건 등을 정한 뒤 코드를 추가하세요. */
 void backtracking(void)
 {
 }
 int main(void)
 {
-    size_t sort_number = 0;
+    size_t paradigm_number = 0;
 
-    switch (sort_number) {
+    switch (paradigm_number) {
     case 0: {
-        int data[] = {11, 13, 7, 12, 16, 9, 24, 5, 10, 3};
-        size_t n = sizeof(data) / sizeof(*data);
-        if (divide_and_conquer(data, n) == false) {
-            return 1;
-        }
+        divide_and_conquer();
+
         break;
     }
     case 1:
