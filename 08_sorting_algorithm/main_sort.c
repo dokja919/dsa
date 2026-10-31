@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void swap(int *first, int *second)
+void swap(int *a, int *b)
 {
-    int temp = *first;
-    *first = *second;
-    *second = temp;
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 // Bubble sort
 void bubble_sort(int array[], size_t n)
