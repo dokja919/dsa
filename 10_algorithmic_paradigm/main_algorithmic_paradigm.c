@@ -49,7 +49,12 @@ bool fractional_knapsack(Item items[], size_t n, double capacity, double *max_va
     if (items == NULL || capacity < 0.0 || max_value == NULL) {
         return false;
     }
+    *max_value = 0.0;
+
     for (size_t i = 0; i < n; i++) {
+        if (items[i].weight <= 0.0 || items[i].value < 0.0) {
+            return false;
+        }
         items[i].ratio = items[i].value / items[i].weight;
     }
     for (size_t i = 1; i < n; i++) {
@@ -62,21 +67,21 @@ bool fractional_knapsack(Item items[], size_t n, double capacity, double *max_va
         }
         items[j] = key;
     }
-    for (size_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < n && capacity > 0.0; i++) {
+        double fraction;
 
-        if (capacity <= 0.0) {
-            break;
-        }
         if (items[i].weight <= capacity) {
-            capacity -= items[i].weight;
-            *max_value += items[i].value;
-            printf("item of %d\n", items[i].id);
+            fraction = 1.0;
         } else {
-            double fraction = capacity / items[i].weight;
-            printf("%.2f%% of item of %d\n", fraction * 100.0, items[i].id);
-            capacity = 0.0;
-            *max_value += items[i].value * fraction;
+            fraction = capacity / items[i].weight;
         }
+        double obtained_value = items[i].value * fraction;
+
+        *max_value += obtained_value;
+        capacity -= items[i].weight * fraction;
+
+        printf("item %d: value = %.2f, selected = %.2f%%, obtained value = %.2f\n",
+               items[i].id, items[i].value, fraction * 100.0, obtained_value);
     }
     return true;
 }
@@ -85,7 +90,9 @@ void greedy_algorithm(void)
     Item items[] = {
         { 1, 10.0, 60.0, 0.0 },
         { 2, 20.0, 100.0, 0.0 },
-        { 3, 30.0, 120.0, 0.0 }
+        { 3, 30.0, 120.0, 0.0 },
+        { 4, 5.0, 50.0, 0.0 },
+        { 5, 15.0, 45.0, 0.0 }
     };
     size_t n = sizeof(items) / sizeof(items[0]);
     double capacity = 50.0;
