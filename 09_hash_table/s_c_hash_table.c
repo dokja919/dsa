@@ -116,13 +116,3 @@ bool sc_search(SCSet *table, int key, SCItem *data)
     }
     return false;
 }
-// void printBuckets(void)
-//{
-//     for (int i = 0; i < CAPACITY; i++) {
-//         printf("bucket %d:", i);
-//         for (Entry *e = buckets[i]; e != NULL; e = e->next) {
-//             printf(" (%s=%d)", e->key, e->value);
-//         }
-//         printf("\n");
-//     }
-// }
