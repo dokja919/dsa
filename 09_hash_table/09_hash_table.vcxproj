@@ -20,9 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="direct_address_table.c" />
-    <ClCompile Include="linear_probing.c" />
-    <ClCompile Include="linear_probing1.c" />
-    <ClCompile Include="linear_probing2.c" />
+    <ClCompile Include="l_p_hash_table.c" />
+    <ClCompile Include="l_p_hash_table1.c" />
     <ClCompile Include="main_hash_table.c" />
     <ClCompile Include="s_c_hash_table.c" />
   </ItemGroup>

@@ -1,17 +1,23 @@
 #include <stdio.h>
-#define SIZE 10
 
-int hash(int key)
+enum { LP_CAPACITY = 16 };
+
+size_t hash(int key)
 {
-    return key % SIZE;
+    int remainder = key % LP_CAPACITY;
+
+    if (remainder < 0) {
+        remainder += LP_CAPACITY;
+    }
+    return (size_t)remainder;
 }
 int probe(int H[], int key)
 {
     int index = hash(key);
     int i = 0;
-    while (H[(index + i) % SIZE] != 0)
+    while (H[(index + i) % LP_CAPACITY] != 0)
         i++;
-    return (index + i) % SIZE;
+    return (index + i) % LP_CAPACITY;
 }
 void Insert(int H[], int key)
 {
@@ -24,9 +30,9 @@ int Search(int H[], int key)
 {
     int index = hash(key);
     int i = 0;
-    while (H[(index + i) % SIZE] != key)
+    while (H[(index + i) % LP_CAPACITY] != key)
         i++;
-    return (index + i) % SIZE;
+    return (index + i) % LP_CAPACITY;
 }
 int main()
 {
