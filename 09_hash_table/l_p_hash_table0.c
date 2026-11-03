@@ -55,45 +55,41 @@ size_t lp_hash(LPSet *table, int key)
     }
     return (size_t)remainder;
 }
-bool insert(LPSet *table, int key)
+bool insert(LPSet *table, LPItem data)
 {
     if (table == NULL) {
         return false;
     }
-    size_t start = lp_hash(table, key);
+    size_t start = lp_hash(table, data.key);
     size_t first_deleted = table->capacity;
 
     for (size_t i = 0; i < table->capacity; i++) {
         size_t index = (start + i) % table->capacity;
         LPItem *item = &table->items[index];
 
-        if (item->state == LP_OCCUPIED) {
-            if (item->key == key) {
-                return false; // 이미 존재하는 키는 중복 삽입하지 않는다.
-            }
-        } else if (item->state == LP_DELETED) {
-            if (first_deleted == table->capacity) {
-                first_deleted = index;
-            }
-        } else { // LP_EMPTY
+        if (item->state == LP_OCCUPIED && item->key == data.key) {
+            return false;
+        } else if (item->state == LP_EMPTY) {
             if (first_deleted != table->capacity) {
                 index = first_deleted;
             }
-            table->items[index].key = key;
+            table->items[index].key = data.key;
             table->items[index].state = LP_OCCUPIED;
             table->size++;
             return false;
+        } else if (item->state == LP_DELETED && first_deleted == table->capacity) {
+            first_deleted = index;
         }
     }
     if (first_deleted != table->capacity) {
-        table->items[first_deleted].key = key;
+        table->items[first_deleted] = data;
         table->items[first_deleted].state = LP_OCCUPIED;
         table->size++;
         return true;
     }
     return false;
 }
-bool lp_search(LPSet *table, int key, LPItem *data)
+bool lp_search(LPSet *table, int key, size_t index, LPItem *data)
 {
     if (table == NULL) {
         return false;
@@ -101,55 +97,58 @@ bool lp_search(LPSet *table, int key, LPItem *data)
     size_t start = lp_hash(table, key);
 
     for (size_t i = 0; i < table->capacity; i++) {
-        size_t index = (start + i) % table->capacity;
-        LPItem *item = &table->items[index];
+        size_t target_index = (start + i) % table->capacity;
+        LPItem *target = &table->items[target_index];
 
-        if (item->state == LP_EMPTY) {
+        if (target->state == LP_EMPTY) {
             return false;
         }
-        if (item->state == LP_OCCUPIED && item->key == key) {
-            *data = *item;
+        if (target->state == LP_OCCUPIED && target->key == key) {
+            if (data != NULL) {
+                index = target_index;
+                *data = *target;
+            }
             return true;
         }
     }
     return false;
 }
-int delete(LPSet *table, int key)
+bool lp_delete(LPSet *table, int key, LPItem *data)
 {
-    int index = lp_search(table, key);
-
-    if (index == -1) {
-        return 0; // 삭제할 키가 없다.
-    }
-
-    table->items[index].state = LP_DELETED;
-    table->size--;
-    return 1; // 삭제 성공
-}
-
-int main(void)
-{
-    LPSet *table = lp_create();
     if (table == NULL) {
-        fprintf(stderr, "Failed to create hash table.\n");
-        return 1;
+        return false;
     }
-
-    insert(table, 12);
-    insert(table, 20);
-    insert(table, 28);
-    insert(table, 35);
-
-    printf("Key 28 found at %d\n", lp_search(table, 28));
-
-    if (delete(table, 20)) {
-        printf("Key 20 deleted.\n");
+    size_t index;
+    LPItem target;
+    if (lp_search(table, key, index, &target) == false) {
+        return false;
     }
+    table->items[index].state = LP_DELETED;
+    *data = target;
+    table->size--;
 
-    // 20을 삭제해도 tombstone 덕분에 뒤에 있던 28을 찾을 수 있다.
-    printf("Key 28 found at %d\n", lp_search(table, 28));
-    printf("Key 20 found at %d\n", lp_search(table, 20));
-
-    lp_destroy(table);
-    return 0;
+    return true;
 }
+// int main(void)
+//{
+//     LPItem data;
+//     LPSet *table = lp_create();
+//     if (table == NULL) {
+//         return 1;
+//     }
+//     lp_insert(table, 12);
+//     lp_insert(table, 20);
+//     lp_insert(table, 28);
+//     lp_insert(table, 35);
+//
+//     printf("Key 28 found at %d\n", lp_search(table, 28));
+//
+//     if (lp_delete(table, 20)) {
+//         printf("Key 20 deleted.\n");
+//     }
+//     printf("Key 28 found at %d\n", lp_search(table, 28, &data));
+//     printf("Key 20 found at %d\n", lp_search(table, 20, &data));
+//
+//     lp_destroy(table);
+//     return 0;
+// }
