@@ -7,9 +7,9 @@ enum {
 };
 
 typedef enum {
-    EMPTY,
-    OCCUPIED,
-    DELETED
+    LP_EMPTY,
+    LP_OCCUPIED,
+    LP_DELETED
 } LPState;
 
 typedef struct {
@@ -40,10 +40,11 @@ LPSet *lp_create(void)
 }
 void lp_destroy(LPSet *table)
 {
-    if (table != NULL) {
-        free(table->items);
-        free(table);
+    if (table == NULL) {
+        return;
     }
+    free(table->items);
+    free(table);
 }
 size_t lp_hash(LPSet *table, int key)
 {
@@ -67,30 +68,33 @@ bool lp_insert(LPSet *table, LPItem data)
         size_t index = (start + i) % table->capacity;
         LPItem *item = &table->items[index];
 
-        if (item->state == OCCUPIED && item->key == data.key) {
-            return true;
-        }
-        if (item->state == DELETED && first_deleted == table->capacity) {
-            first_deleted = index;
-        } else if (item->state == EMPTY) {
-            if (first_deleted != table->capacity) {
-                index = first_deleted;
+        if (item->state == LP_OCCUPIED) {
+            if (item->key == data.key) {
+                return false;
             }
-            table->items[index] = data;
-            table->items[index].state = OCCUPIED;
+        } else if (item->state == LP_DELETED) {
+            if (first_deleted == table->capacity) {
+                first_deleted = index;
+            }
+        } else {
+            size_t insert_index = (first_deleted != table->capacity)
+                                      ? first_deleted
+                                      : index;
+            table->items[insert_index].key = data.key;
+            table->items[insert_index].state = LP_OCCUPIED;
             table->size++;
             return true;
         }
     }
     if (first_deleted != table->capacity) {
-        table->items[first_deleted] = data;
-        table->items[first_deleted].state = OCCUPIED;
+        table->items[first_deleted].key = data.key;
+        table->items[first_deleted].state = LP_OCCUPIED;
         table->size++;
         return true;
     }
     return false;
 }
-bool lp_search(LPSet *table, int key, LPItem *data)
+bool lp_search(LPSet *table, int key, size_t *index, LPItem *data)
 {
     if (table == NULL) {
         return false;
@@ -98,13 +102,16 @@ bool lp_search(LPSet *table, int key, LPItem *data)
     size_t start = lp_hash(table, key);
 
     for (size_t i = 0; i < table->capacity; i++) {
-        size_t index = (start + i) % table->capacity;
-        LPItem *target = &table->items[index];
+        size_t target_index = (start + i) % table->capacity;
+        LPItem *target = &table->items[target_index];
 
-        if (target->state == EMPTY) {
+        if (target->state == LP_EMPTY) {
             return false;
         }
-        if (target->state == OCCUPIED && target->key == key) {
+        if (target->state == LP_OCCUPIED && target->key == key) {
+            if (index != NULL) {
+                *index = target_index;
+            }
             if (data != NULL) {
                 *data = *target;
             }
@@ -118,24 +125,16 @@ bool lp_delete(LPSet *table, int key, LPItem *data)
     if (table == NULL) {
         return false;
     }
-    size_t start = lp_hash(table, key);
-
-    for (size_t i = 0; i < table->capacity; i++) {
-        size_t index = (start + i) % table->capacity;
-        LPItem *target = &table->items[index];
-
-        if (target->state == EMPTY) {
-            return false;
-        }
-        if (target->state == OCCUPIED && target->key == key) {
-            target->state = DELETED;
-            *data = *target;
-            table->size--;
-
-            return true;
-        }
+    size_t index;
+    LPItem target;
+    if (lp_search(table, key, &index, &target) == false) {
+        return false;
     }
-    return false;
+    table->items[index].state = LP_DELETED;
+    *data = target;
+    table->size--;
+
+    return true;
 }
 // void lp_print(LPSet *table)
 //{
@@ -143,10 +142,10 @@ bool lp_delete(LPSet *table, int key, LPItem *data)
 //         LPItem *current = &table->items[i];
 //         printf("[%d] ", i);
 //
-//         if (current->state == EMPTY) {
-//             printf("EMPTY\n");
-//         } else if (current->state == DELETED) {
-//             printf("DELETED\n");
+//         if (current->state == LP_EMPTY) {
+//             printf("LP_EMPTY\n");
+//         } else if (current->state == LP_DELETED) {
+//             printf("LP_DELETED\n");
 //         } else {
 //             printf("key: %d\n", current->key);
 //         }
@@ -156,9 +155,9 @@ bool lp_delete(LPSet *table, int key, LPItem *data)
 //{
 //      LPSet *table = lp_create();
 //
-//      lp_insert(table, (LPItem){ 12, EMPTY });
-//      lp_insert(table, (LPItem){ 22, EMPTY });
-//      lp_insert(table, (LPItem){ 32, EMPTY });
+//      lp_insert(table, (LPItem){ 12, LP_EMPTY });
+//      lp_insert(table, (LPItem){ 22, LP_EMPTY });
+//      lp_insert(table, (LPItem){ 32, LP_EMPTY });
 //
 //      printf("=== Hash Table ===\n");
 //      lp_print(table);
@@ -179,3 +178,27 @@ bool lp_delete(LPSet *table, int key, LPItem *data)
 //
 //      return 0;
 //  }
+
+// int main(void)
+//{
+//     LPItem data;
+//     LPSet *table = lp_create();
+//     if (table == NULL) {
+//         return 1;
+//     }
+//     lp_insert(table, 12);
+//     lp_insert(table, 20);
+//     lp_insert(table, 28);
+//     lp_insert(table, 35);
+//
+//     printf("Key 28 found at %d\n", lp_search(table, 28));
+//
+//     if (lp_delete(table, 20)) {
+//         printf("Key 20 deleted.\n");
+//     }
+//     printf("Key 28 found at %d\n", lp_search(table, 28, &data));
+//     printf("Key 20 found at %d\n", lp_search(table, 20, &data));
+//
+//     lp_destroy(table);
+//     return 0;
+// }

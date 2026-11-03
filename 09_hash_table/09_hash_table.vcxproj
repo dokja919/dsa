@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="direct_address_table.c" />
-    <ClCompile Include="l_p_hash_table0.c" />
     <ClCompile Include="l_p_hash_table.c" />
     <ClCompile Include="main_hash_table.c" />
     <ClCompile Include="s_c_hash_table.c" />
