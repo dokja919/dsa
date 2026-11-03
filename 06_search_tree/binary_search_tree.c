@@ -102,7 +102,7 @@ static void bs_transplant(BSOrderedSet *tree, BSNode *parent, BSNode *old_child,
 }
 bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
 {
-    if (tree == NULL || data == NULL) {
+    if (tree == NULL) {
         return false;
     }
     // 1. 삭제할 노드 탐색
@@ -119,7 +119,9 @@ bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
     if (target == NULL) {
         return false;
     }
-    *data = target->data;
+    if (data != NULL) {
+        *data = target->data;
+    }
     // 2. 자식이 0개 또는 1개인 경우
     if (target->left == NULL || target->right == NULL) {
         BSNode *child = target->left ? target->left : target->right;
@@ -147,13 +149,15 @@ bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
 }
 bool bs_search(BSOrderedSet *tree, int key, BSItem *data)
 {
-    if (tree == NULL || data == NULL) {
+    if (tree == NULL) {
         return false;
     }
     BSNode *target = tree->root;
     while (target != NULL) {
         if (key == target->data.key) {
-            *data = target->data;
+            if (data != NULL) {
+                *data = target->data;
+            }
             return true;
         } else if (key < target->data.key) {
             target = target->left;

@@ -14,7 +14,7 @@ bool cdl_insert_before(CDLList *list, CDLNodeHandle node, CDLItem data);
 bool cdl_delete(CDLList *list, CDLNodeHandle node, CDLItem *data);
 bool cdl_get(CDLList *list, CDLNodeHandle node, CDLItem *data);
 bool cdl_set(CDLList *list, CDLNodeHandle node, CDLItem data);
-CDLNodeHandle cdl_find(CDLList *list, CDLItem data);
+CDLNodeHandle cdl_search(CDLList *list, CDLItem data);
 bool cdl_insert_at(CDLList *list, size_t index, CDLItem data);
 bool cdl_delete_at(CDLList *list, size_t index, CDLItem *data);
 bool cdl_get_at(CDLList *list, size_t index, CDLItem *data);

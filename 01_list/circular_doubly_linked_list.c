@@ -79,10 +79,12 @@ bool cdl_insert_before(CDLList *list, CDLNodeHandle next, CDLItem data)
 }
 bool cdl_delete(CDLList *list, CDLNodeHandle target, CDLItem *data)
 {
-    if (node_valid(list, target) == false || data == NULL) {
+    if (node_valid(list, target) == false) {
         return false;
     }
-    *data = target->data;
+    if (data != NULL) {
+        *data = target->data;
+    }
     target->prev->next = target->next;
     target->next->prev = target->prev;
 
@@ -93,11 +95,12 @@ bool cdl_delete(CDLList *list, CDLNodeHandle target, CDLItem *data)
 }
 bool cdl_get(CDLList *list, CDLNodeHandle node, CDLItem *data)
 {
-    if (node_valid(list, node) == false || data == NULL) {
+    if (node_valid(list, node) == false) {
         return false;
     }
-    *data = node->data;
-
+    if (data != NULL) {
+        *data = node->data;
+    }
     return true;
 }
 bool cdl_set(CDLList *list, CDLNodeHandle node, CDLItem data)
@@ -109,7 +112,7 @@ bool cdl_set(CDLList *list, CDLNodeHandle node, CDLItem data)
 
     return true;
 }
-CDLNodeHandle cdl_find(CDLList *list, CDLItem data)
+CDLNodeHandle cdl_search(CDLList *list, CDLItem data)
 {
     if (list == NULL) {
         return NULL;
@@ -162,7 +165,7 @@ bool cdl_insert_at(CDLList *list, size_t index, CDLItem data)
 }
 bool cdl_delete_at(CDLList *list, size_t index, CDLItem *data)
 {
-    if (list == NULL || index >= list->size || data == NULL) {
+    if (list == NULL || index >= list->size) {
         return false;
     }
     CDLNode *target = node_at(list, index);
@@ -170,7 +173,9 @@ bool cdl_delete_at(CDLList *list, size_t index, CDLItem *data)
     target->next->prev = target->prev;
     target->prev->next = target->next;
 
-    *data = target->data;
+    if (data != NULL) {
+        *data = target->data;
+    }
     free(target);
     list->size--;
 
@@ -178,11 +183,12 @@ bool cdl_delete_at(CDLList *list, size_t index, CDLItem *data)
 }
 bool cdl_get_at(CDLList *list, size_t index, CDLItem *data)
 {
-    if (list == NULL || index >= list->size || data == NULL) {
+    if (list == NULL || index >= list->size) {
         return false;
     }
-    *data = node_at(list, index)->data;
-
+    if (data != NULL) {
+        *data = node_at(list, index)->data;
+    }
     return true;
 }
 size_t cdl_size(CDLList *list)

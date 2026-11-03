@@ -88,21 +88,25 @@ bool c_push_front(CDeque *deque, CItem data)
 }
 bool c_pop_back(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || data == NULL) {
+    if (c_is_empty(deque)) {
         return false;
     }
     size_t back = (deque->front + deque->size - 1) % deque->capacity;
-    *data = deque->items[back];
+    if (data != NULL) {
+        *data = deque->items[back];
+    }
     deque->size--;
 
     return true;
 }
 bool c_pop_front(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || data == NULL) {
+    if (c_is_empty(deque)) {
         return false;
     }
-    *data = deque->items[deque->front];
+    if (data != NULL) {
+        *data = deque->items[deque->front];
+    }
     deque->front = (deque->front + 1) % deque->capacity;
     deque->size--;
 
@@ -110,21 +114,23 @@ bool c_pop_front(CDeque *deque, CItem *data)
 }
 bool c_front(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || data == NULL) {
+    if (c_is_empty(deque)) {
         return false;
     }
-    *data = deque->items[deque->front];
-
+    if (data != NULL) {
+        *data = deque->items[deque->front];
+    }
     return true;
 }
 bool c_back(CDeque *deque, CItem *data)
 {
-    if (c_is_empty(deque) || data == NULL) {
+    if (c_is_empty(deque)) {
         return false;
     }
     size_t back = (deque->front + deque->size - 1) % deque->capacity;
-    *data = deque->items[back];
-
+    if (data != NULL) {
+        *data = deque->items[back];
+    }
     return true;
 }
 bool c_is_empty(CDeque *deque)

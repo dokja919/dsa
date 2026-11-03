@@ -64,10 +64,12 @@ bool c_enqueue(CQueue *queue, CItem data)
 }
 bool c_dequeue(CQueue *queue, CItem *data)
 {
-    if (c_is_empty(queue) || data == NULL) {
+    if (c_is_empty(queue)) {
         return false;
     }
-    *data = queue->items[queue->front];
+    if (data != NULL) {
+        *data = queue->items[queue->front];
+    }
     queue->front = (queue->front + 1) % queue->capacity;
     queue->size--;
 
@@ -75,11 +77,12 @@ bool c_dequeue(CQueue *queue, CItem *data)
 }
 bool c_peek(CQueue *queue, CItem *data)
 {
-    if (c_is_empty(queue) || data == NULL) {
+    if (c_is_empty(queue)) {
         return false;
     }
-    *data = queue->items[queue->front];
-
+    if (data != NULL) {
+        *data = queue->items[queue->front];
+    }
     return true;
 }
 size_t c_size(CQueue *queue)
