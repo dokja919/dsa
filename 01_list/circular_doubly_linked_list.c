@@ -112,17 +112,20 @@ bool cdl_set(CDLList *list, CDLNodeHandle node, CDLItem data)
 
     return true;
 }
-CDLNodeHandle cdl_search(CDLList *list, CDLItem data)
+bool cdl_search(CDLList *list, int value, CDLNodeHandle *node)
 {
     if (list == NULL) {
-        return NULL;
+        return false;
     }
     for (CDLNode *target = list->sentinel->next; target != list->sentinel; target = target->next) {
-        if (target->data == data) {
-            return target;
+        if (target->data == value) {
+            if (node != NULL) {
+                *node = target;
+            }
+            return true;
         }
     }
-    return NULL;
+    return false;
 }
 static CDLNode *node_at(CDLList *list, size_t index)
 {

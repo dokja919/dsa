@@ -147,7 +147,7 @@ bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
 
     return true;
 }
-bool bs_search(BSOrderedSet *tree, int key, BSItem *data)
+bool bs_search(BSOrderedSet *tree, int key, BSNodeHandle *node)
 {
     if (tree == NULL) {
         return false;
@@ -155,8 +155,8 @@ bool bs_search(BSOrderedSet *tree, int key, BSItem *data)
     BSNode *target = tree->root;
     while (target != NULL) {
         if (key == target->data.key) {
-            if (data != NULL) {
-                *data = target->data;
+            if (node != NULL) {
+                *node = target;
             }
             return true;
         } else if (key < target->data.key) {
