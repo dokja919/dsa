@@ -5,6 +5,7 @@
 
 typedef struct BSNode {
     BSItem data;
+    struct BSNode *parent;
     struct BSNode *left;
     struct BSNode *right;
 } BSNode;
@@ -25,16 +26,30 @@ BSOrderedSet *bs_create(void)
 }
 static void bs_subtree_destroy(BSNode *root)
 {
-    while (root != NULL) {
+    if (root == NULL) {
+        return;
+    }
+    BSNode *stop = root->parent;
+
+    while (root != stop) {
+
         if (root->left != NULL) {
-            BSNode *left = root->left;
-            root->left = left->right;
-            left->right = root;
-            root = left;
+            root = root->left;
+        } else if (root->right != NULL) {
+            root = root->right;
         } else {
-            BSNode *right = root->right;
+            BSNode *parent = root->parent;
+
+            if (parent != NULL) {
+
+                if (parent->left == root) {
+                    parent->left = NULL;
+                } else {
+                    parent->right = NULL;
+                }
+            }
             free(root);
-            root = right;
+            root = parent;
         }
     }
 }
@@ -53,6 +68,7 @@ static BSNode *bs_node_create(BSItem data)
         return NULL;
     }
     new_node->data = data;
+    new_node->parent = NULL;
     new_node->left = NULL;
     new_node->right = NULL;
 
@@ -65,6 +81,7 @@ bool bs_insert(BSOrderedSet *tree, BSItem data)
     }
     BSNode *parent = NULL;
     BSNode *current = tree->root;
+
     while (current != NULL) {
         parent = current;
 
@@ -81,6 +98,8 @@ bool bs_insert(BSOrderedSet *tree, BSItem data)
     if (new_node == NULL) {
         return false;
     }
+    new_node->parent = parent;
+
     if (parent == NULL) {
         tree->root = new_node;
     } else if (data.key < parent->data.key) {
@@ -90,8 +109,10 @@ bool bs_insert(BSOrderedSet *tree, BSItem data)
     }
     return true;
 }
-static void bs_transplant(BSOrderedSet *tree, BSNode *parent, BSNode *old_child, BSNode *new_child)
+static void bs_transplant(BSOrderedSet *tree, BSNode *old_child, BSNode *new_child)
 {
+    BSNode *parent = old_child->parent;
+
     if (parent == NULL) {
         tree->root = new_child;
     } else if (old_child == parent->left) {
@@ -99,6 +120,44 @@ static void bs_transplant(BSOrderedSet *tree, BSNode *parent, BSNode *old_child,
     } else {
         parent->right = new_child;
     }
+    if (new_child != NULL) {
+        new_child->parent = parent;
+    }
+}
+static bool bs_remove_node(BSOrderedSet *tree, BSNode *target, BSItem *data)
+{
+    if (data != NULL) {
+        *data = target->data;
+    }
+    // 2. 자식이 0개 또는 1개인 경우
+    if (target->left == NULL || target->right == NULL) {
+        BSNode *child = target->left ? target->left : target->right;
+        bs_transplant(tree, target, child);
+        free(target);
+        return true;
+    }
+    // 3. 두 자식이 있는 경우: 중위 후계자 탐색
+    BSNode *succ = target->right;
+
+    while (succ->left != NULL) {
+        succ = succ->left;
+    }
+    // 4. 후계자를 원래 위치에서 분리
+    if (succ->parent != target) {
+        bs_transplant(tree, succ, succ->right);
+
+        succ->right = target->right;
+        succ->right->parent = succ;
+    }
+    // 5. 후계자를 삭제 위치에 연결
+    bs_transplant(tree, target, succ);
+
+    succ->left = target->left;
+    succ->left->parent = succ;
+
+    free(target);
+
+    return true;
 }
 bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
 {
@@ -106,57 +165,35 @@ bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
         return false;
     }
     // 1. 삭제할 노드 탐색
-    BSNode *target_parent = NULL;
-    BSNode *target = tree->root;
-    while (target && key != target->data.key) {
-        target_parent = target;
-        if (key < target->data.key) {
-            target = target->left;
-        } else {
-            target = target->right;
-        }
-    }
-    if (target == NULL) {
+    BSNode *target;
+    if (bs_search(tree, key, &target) == false) {
         return false;
     }
-    if (data != NULL) {
-        *data = target->data;
-    }
-    // 2. 자식이 0개 또는 1개인 경우
-    if (target->left == NULL || target->right == NULL) {
-        BSNode *child = target->left ? target->left : target->right;
-        bs_transplant(tree, target_parent, target, child);
-        free(target);
-        return true;
-    }
-    // 3. 두 자식이 있는 경우: 중위 후계자 탐색
-    BSNode *succ_parent = target;
-    BSNode *succ = target->right;
-    while (succ->left != NULL) {
-        succ_parent = succ;
-        succ = succ->left;
-    }
-    if (succ != target->right) {
-        bs_transplant(tree, succ_parent, succ, succ->right);
-        succ->right = target->right;
-    }
-    // 4. 후계자를 삭제 위치에 연결
-    bs_transplant(tree, target_parent, target, succ);
-    succ->left = target->left;
-    free(target);
-
-    return true;
+    return bs_remove_node(tree, target, data);
 }
-bool bs_search(BSOrderedSet *tree, int key, BSNodeHandle *node)
+bool bs_delete_iter(BSOrderedSet *tree, BSNodeHandle target, BSItem *data)
 {
+    if (tree == NULL || target == NULL) {
+        return false;
+    }
+    return bs_remove_node(tree, target, data);
+}
+bool bs_search(BSOrderedSet *tree, int key, BSNodeHandle *iter)
+{
+    if (iter != NULL) {
+        *iter = NULL;
+    }
     if (tree == NULL) {
         return false;
     }
     BSNode *target = tree->root;
+
     while (target != NULL) {
+
         if (key == target->data.key) {
-            if (node != NULL) {
-                *node = target;
+
+            if (iter != NULL) {
+                *iter = target;
             }
             return true;
         } else if (key < target->data.key) {
@@ -166,6 +203,10 @@ bool bs_search(BSOrderedSet *tree, int key, BSNodeHandle *node)
         }
     }
     return false;
+}
+BSItem bs_get(BSNodeHandle iter)
+{
+    return iter->data;
 }
 static void bs_inorder(BSNode *node)
 {
