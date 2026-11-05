@@ -13,7 +13,7 @@ SCSet *sc_create(void);
 void sc_destroy(SCSet *table);
 size_t sc_hash(int key);
 bool sc_insert(SCSet *table, SCItem data);
-bool sc_delete(SCSet *table, int key, SCItem *data);
 bool sc_search(SCSet *table, int key, SCItem *data);
+bool sc_delete(SCSet *table, int key, SCItem *data);
 
 #endif

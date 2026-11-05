@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="direct_address_table.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="s_c_hash_table.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -30,9 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="s_c_hash_table.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="direct_address_table.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

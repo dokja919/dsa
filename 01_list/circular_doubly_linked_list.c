@@ -13,7 +13,7 @@ struct CircularDoublyLinkedList {
     size_t size;
 };
 
-static CDLNode *cdl_node_create(CDLItem data)
+static CDLNode *node_create(CDLItem data)
 {
     CDLNode *new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
@@ -31,7 +31,7 @@ CDLList *cdl_create(void)
     if (list == NULL) {
         return NULL;
     }
-    list->sentinel = cdl_node_create(0);
+    list->sentinel = node_create(0);
     if (list->sentinel == NULL) {
         free(list);
         return NULL;
@@ -65,7 +65,7 @@ bool cdl_insert_before(CDLList *list, CDLNodeHandle next, CDLItem data)
     if (node_valid(list, next) == false) {
         return false;
     }
-    CDLNode *new_node = cdl_node_create(data);
+    CDLNode *new_node = node_create(data);
     if (new_node == NULL) {
         return false;
     }
@@ -93,9 +93,9 @@ bool cdl_delete(CDLList *list, CDLNodeHandle target, CDLItem *data)
 
     return true;
 }
-bool cdl_get(CDLList *list, CDLNodeHandle node, CDLItem *data)
+bool cdl_get(CDLNodeHandle node, CDLItem *data)
 {
-    if (node_valid(list, node) == false) {
+    if (node == NULL) {
         return false;
     }
     if (data != NULL) {
@@ -103,9 +103,9 @@ bool cdl_get(CDLList *list, CDLNodeHandle node, CDLItem *data)
     }
     return true;
 }
-bool cdl_set(CDLList *list, CDLNodeHandle node, CDLItem data)
+bool cdl_set(CDLNodeHandle node, CDLItem data)
 {
-    if (node_valid(list, node) == false) {
+    if (node == NULL) {
         return false;
     }
     node->data = data;
@@ -127,7 +127,7 @@ bool cdl_search(CDLList *list, int value, CDLNodeHandle *node)
     }
     return false;
 }
-static CDLNode *node_at(CDLList *list, size_t index)
+static CDLNode *get_node_at(CDLList *list, size_t index)
 {
     CDLNode *target = NULL;
     if (index < list->size / 2) {
@@ -150,11 +150,11 @@ bool cdl_insert_at(CDLList *list, size_t index, CDLItem data)
     if (list == NULL || index > list->size) {
         return false;
     }
-    CDLNode *new_node = cdl_node_create(data);
+    CDLNode *new_node = node_create(data);
     if (new_node == NULL) {
         return false;
     }
-    CDLNode *next = node_at(list, index);
+    CDLNode *next = get_node_at(list, index);
 
     next->prev->next = new_node;
     new_node->prev = next->prev;
@@ -171,7 +171,7 @@ bool cdl_delete_at(CDLList *list, size_t index, CDLItem *data)
     if (list == NULL || index >= list->size) {
         return false;
     }
-    CDLNode *target = node_at(list, index);
+    CDLNode *target = get_node_at(list, index);
 
     target->next->prev = target->prev;
     target->prev->next = target->next;
@@ -190,7 +190,7 @@ bool cdl_get_at(CDLList *list, size_t index, CDLItem *data)
         return false;
     }
     if (data != NULL) {
-        *data = node_at(list, index)->data;
+        *data = get_node_at(list, index)->data;
     }
     return true;
 }

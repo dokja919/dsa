@@ -35,7 +35,7 @@ void c_destroy(CDeque *deque)
     free(deque->items);
     free(deque);
 }
-static bool c_ensure_capacity(CDeque *deque)
+static bool ensure_capacity(CDeque *deque)
 {
     size_t new_capacity = deque->capacity * 2;
 
@@ -60,7 +60,7 @@ bool c_push_back(CDeque *deque, CItem data)
         return false;
     }
     if (deque->size >= deque->capacity) {
-        if (c_ensure_capacity(deque) == false) {
+        if (ensure_capacity(deque) == false) {
             return false;
         }
     }
@@ -75,7 +75,7 @@ bool c_push_front(CDeque *deque, CItem data)
     if (deque == NULL) {
         return false;
     }
-    if (c_ensure_capacity(deque) == false) {
+    if (ensure_capacity(deque) == false) {
         if (deque->size == deque->capacity) {
             return false;
         }

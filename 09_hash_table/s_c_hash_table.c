@@ -6,6 +6,7 @@ enum { SC_CAPACITY = 16 };
 typedef struct SCNode {
     SCItem data;
     struct SCNode *next;
+    struct SCNode *prev;
 } SCNode;
 
 struct SeparateChainingHashTable {
@@ -43,7 +44,7 @@ size_t sc_hash(int key)
     }
     return (size_t)remainder;
 }
-static SCNode *sc_node_create(SCItem data)
+static SCNode *node_create(SCItem data)
 {
     SCNode *new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
@@ -67,7 +68,7 @@ bool sc_insert(SCSet *table, SCItem data)
             return true;
         }
     }
-    SCNode *new_node = sc_node_create(data);
+    SCNode *new_node = node_create(data);
     if (new_node == NULL) {
         return false;
     }

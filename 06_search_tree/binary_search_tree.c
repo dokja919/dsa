@@ -24,7 +24,7 @@ BSOrderedSet *bs_create(void)
 
     return tree;
 }
-static void bs_subtree_destroy(BSNode *root)
+static void subtree_destroy(BSNode *root)
 {
     if (root == NULL) {
         return;
@@ -58,10 +58,10 @@ void bs_destroy(BSOrderedSet *tree)
     if (tree == NULL) {
         return;
     }
-    bs_subtree_destroy(tree->root);
+    subtree_destroy(tree->root);
     free(tree);
 }
-static BSNode *bs_node_create(BSItem data)
+static BSNode *node_create(BSItem data)
 {
     BSNode *new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
@@ -94,7 +94,7 @@ bool bs_insert(BSOrderedSet *tree, BSItem data)
             return true;
         }
     }
-    BSNode *new_node = bs_node_create(data);
+    BSNode *new_node = node_create(data);
     if (new_node == NULL) {
         return false;
     }
@@ -109,7 +109,7 @@ bool bs_insert(BSOrderedSet *tree, BSItem data)
     }
     return true;
 }
-static void bs_transplant(BSOrderedSet *tree, BSNode *old_child, BSNode *new_child)
+static void transplant(BSOrderedSet *tree, BSNode *old_child, BSNode *new_child)
 {
     BSNode *parent = old_child->parent;
 
@@ -124,7 +124,7 @@ static void bs_transplant(BSOrderedSet *tree, BSNode *old_child, BSNode *new_chi
         new_child->parent = parent;
     }
 }
-static bool bs_remove_node(BSOrderedSet *tree, BSNode *target, BSItem *data)
+static bool delete_node(BSOrderedSet *tree, BSNode *target, BSItem *data)
 {
     if (data != NULL) {
         *data = target->data;
@@ -132,7 +132,7 @@ static bool bs_remove_node(BSOrderedSet *tree, BSNode *target, BSItem *data)
     // 2. 자식이 0개 또는 1개인 경우
     if (target->left == NULL || target->right == NULL) {
         BSNode *child = target->left ? target->left : target->right;
-        bs_transplant(tree, target, child);
+        transplant(tree, target, child);
         free(target);
         return true;
     }
@@ -144,13 +144,13 @@ static bool bs_remove_node(BSOrderedSet *tree, BSNode *target, BSItem *data)
     }
     // 4. 후계자를 원래 위치에서 분리
     if (succ->parent != target) {
-        bs_transplant(tree, succ, succ->right);
+        transplant(tree, succ, succ->right);
 
         succ->right = target->right;
         succ->right->parent = succ;
     }
     // 5. 후계자를 삭제 위치에 연결
-    bs_transplant(tree, target, succ);
+    transplant(tree, target, succ);
 
     succ->left = target->left;
     succ->left->parent = succ;
@@ -169,14 +169,14 @@ bool bs_delete(BSOrderedSet *tree, int key, BSItem *data)
     if (bs_search(tree, key, &target) == false) {
         return false;
     }
-    return bs_remove_node(tree, target, data);
+    return delete_node(tree, target, data);
 }
 bool bs_delete_iter(BSOrderedSet *tree, BSNodeHandle target, BSItem *data)
 {
     if (tree == NULL || target == NULL) {
         return false;
     }
-    return bs_remove_node(tree, target, data);
+    return delete_node(tree, target, data);
 }
 bool bs_search(BSOrderedSet *tree, int key, BSNodeHandle *iter)
 {
@@ -208,20 +208,20 @@ BSItem bs_get(BSNodeHandle iter)
 {
     return iter->data;
 }
-static void bs_inorder(BSNode *node)
+static void inorder(BSNode *node)
 {
     if (node == NULL) {
         return;
     }
-    bs_inorder(node->left);
+    inorder(node->left);
     printf("%d ", node->data.key);
-    bs_inorder(node->right);
+    inorder(node->right);
 }
 void bs_print(BSOrderedSet *tree)
 {
     if (tree == NULL) {
         return;
     }
-    bs_inorder(tree->root);
+    inorder(tree->root);
     printf("\n");
 }
