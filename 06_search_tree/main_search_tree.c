@@ -8,7 +8,7 @@ void bs_test(void)
     BSOrderedSet *os = bs_create();
     int keys[] = { 10, 20, 30, 40, 50, 25 };
     BSItem data;
-    BSNodeHandle iter;
+    BSIter iter;
 
     for (int i = 0; i < 6; i++) {
         data.key = keys[i];

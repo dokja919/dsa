@@ -5,30 +5,27 @@ enum { SC_CAPACITY = 16 };
 
 typedef struct SCNode {
     SCItem data;
-    struct SCNode *next;
-    struct SCNode *prev;
+    struct SCNode* prev;
+    struct SCNode* next;
 } SCNode;
 
 struct SeparateChainingHashTable {
-    SCNode *buckets[SC_CAPACITY];
+    SCNode* buckets[SC_CAPACITY];
 };
-
-SCSet *sc_create(void)
+SCSet* sc_create(void)
 {
-    SCSet *table = calloc(1, sizeof(*table));
-
-    return table;
+    return calloc(1, sizeof(SCSet));
 }
-void sc_destroy(SCSet *table)
+void sc_destroy(SCSet* table)
 {
     if (table == NULL) {
         return;
     }
     for (size_t i = 0; i < SC_CAPACITY; i++) {
-        SCNode *current = table->buckets[i];
+        SCNode* current = table->buckets[i];
 
         while (current != NULL) {
-            SCNode *next = current->next;
+            SCNode* next = current->next;
             free(current);
             current = next;
         }
@@ -44,76 +41,121 @@ size_t sc_hash(int key)
     }
     return (size_t)remainder;
 }
-static SCNode *node_create(SCItem data)
+static SCNode* node_create(SCItem data)
 {
-    SCNode *new_node = malloc(sizeof(*new_node));
+    SCNode* new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
         return NULL;
     }
     new_node->data = data;
     new_node->next = NULL;
+    new_node->prev = NULL;
 
     return new_node;
 }
-bool sc_insert(SCSet *table, SCItem data)
+bool sc_insert(SCSet* table, SCItem data)
 {
     if (table == NULL) {
         return false;
     }
     size_t index = sc_hash(data.key);
 
-    for (SCNode *current = table->buckets[index]; current != NULL; current = current->next) {
+    for (SCNode* current = table->buckets[index]; current != NULL; current = current->next) {
         if (current->data.key == data.key) {
             current->data = data;
             return true;
         }
     }
-    SCNode *new_node = node_create(data);
+    SCNode* new_node = node_create(data);
     if (new_node == NULL) {
         return false;
     }
     new_node->next = table->buckets[index];
+    if (table->buckets[index] != NULL) {
+        table->buckets[index]->prev = new_node;
+    }
     table->buckets[index] = new_node;
 
     return true;
 }
-bool sc_delete(SCSet *table, int key, SCItem *data)
+bool sc_search(SCSet* table, int key, SCIter* iter)
 {
-    if (table == NULL || data == NULL) {
+    if (iter != NULL) {
+        *iter = NULL;
+    }
+    if (table == NULL) {
         return false;
     }
     size_t index = sc_hash(key);
-    SCNode *prev = NULL;
-    SCNode *target = table->buckets[index];
+
+    for (SCNode* current = table->buckets[index]; current != NULL; current = current->next) {
+
+        if (current->data.key == key) {
+
+            if (iter != NULL) {
+                *iter = current;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+bool sc_get(SCIter iter, SCItem* data)
+{
+    if (iter == NULL || data == NULL) {
+        return false;
+    }
+
+    *data = iter->data;
+    return true;
+}
+static void node_unlink(SCSet* table, size_t index, SCNode* node)
+{
+    if (node->prev != NULL) {
+        node->prev->next = node->next;
+    } else {
+        table->buckets[index] = node->next;
+    }
+
+    if (node->next != NULL) {
+        node->next->prev = node->prev;
+    }
+}
+bool sc_delete(SCSet* table, int key, SCItem* data)
+{
+    if (table == NULL) {
+        return false;
+    }
+    size_t index = sc_hash(key);
+    SCNode* target = table->buckets[index];
 
     while (target != NULL) {
+
         if (target->data.key == key) {
-            if (prev == NULL) {
-                table->buckets[index] = target->next;
-            } else {
-                prev->next = target->next;
+
+            if (data != NULL) {
+                *data = target->data;
             }
-            *data = target->data;
+            node_unlink(table, index, target);
             free(target);
             return true;
         }
-        prev = target;
         target = target->next;
     }
     return false;
 }
-bool sc_search(SCSet *table, int key, SCItem *data)
+bool sc_delete_iter(SCSet* table, SCIter target, SCItem* data)
 {
-    if (table == NULL || data == NULL) {
+    if (table == NULL || target == NULL) {
         return false;
     }
-    size_t index = sc_hash(key);
+    size_t index = sc_hash(target->data.key);
 
-    for (const SCNode *current = table->buckets[index]; current != NULL; current = current->next) {
-        if (current->data.key == key) {
-            *data = current->data;
-            return true;
-        }
+    if (data != NULL) {
+        *data = target->data;
     }
-    return false;
+    node_unlink(table, index, target);
+    free(target);
+
+    return true;
 }

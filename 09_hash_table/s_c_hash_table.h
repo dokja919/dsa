@@ -7,13 +7,17 @@
 typedef struct {
     int key;
 } SCItem;
+
+typedef struct SCNode* SCIter;
 typedef struct SeparateChainingHashTable SCSet;
 
-SCSet *sc_create(void);
-void sc_destroy(SCSet *table);
+SCSet* sc_create(void);
+void sc_destroy(SCSet* table);
 size_t sc_hash(int key);
-bool sc_insert(SCSet *table, SCItem data);
-bool sc_search(SCSet *table, int key, SCItem *data);
-bool sc_delete(SCSet *table, int key, SCItem *data);
+bool sc_insert(SCSet* table, SCItem data);
+bool sc_search(SCSet* table, int key, SCIter* iter);
+bool sc_get(SCIter iter, SCItem* data);
+bool sc_delete(SCSet* table, int key, SCItem* data);
+bool sc_delete_iter(SCSet* table, SCIter iter, SCItem* data);
 
 #endif

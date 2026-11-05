@@ -56,11 +56,11 @@ void cdl_destroy(CDLList *list)
     free(list->sentinel);
     free(list);
 }
-static bool node_valid(CDLList *list, CDLNodeHandle node)
+static bool node_valid(CDLList *list, CDLIter iter)
 {
-    return list != NULL && node != NULL && node != list->sentinel;
+    return list != NULL && iter != NULL && iter != list->sentinel;
 }
-bool cdl_insert_before(CDLList *list, CDLNodeHandle next, CDLItem data)
+bool cdl_insert_before(CDLList *list, CDLIter next, CDLItem data)
 {
     if (node_valid(list, next) == false) {
         return false;
@@ -77,7 +77,7 @@ bool cdl_insert_before(CDLList *list, CDLNodeHandle next, CDLItem data)
 
     return true;
 }
-bool cdl_delete(CDLList *list, CDLNodeHandle target, CDLItem *data)
+bool cdl_delete_iter(CDLList *list, CDLIter target, CDLItem *data)
 {
     if (node_valid(list, target) == false) {
         return false;
@@ -93,34 +93,38 @@ bool cdl_delete(CDLList *list, CDLNodeHandle target, CDLItem *data)
 
     return true;
 }
-bool cdl_get(CDLNodeHandle node, CDLItem *data)
+bool cdl_get(CDLIter iter, CDLItem *data)
 {
-    if (node == NULL) {
+    if (iter == NULL) {
         return false;
     }
     if (data != NULL) {
-        *data = node->data;
+        *data = iter->data;
     }
     return true;
 }
-bool cdl_set(CDLNodeHandle node, CDLItem data)
+bool cdl_set(CDLIter iter, CDLItem data)
 {
-    if (node == NULL) {
+    if (iter == NULL) {
         return false;
     }
-    node->data = data;
+    iter->data = data;
 
     return true;
 }
-bool cdl_search(CDLList *list, int value, CDLNodeHandle *node)
+bool cdl_search(CDLList *list, int value, CDLIter *iter)
 {
+    if (iter != NULL) {
+        *iter = NULL;
+    }
     if (list == NULL) {
         return false;
     }
     for (CDLNode *target = list->sentinel->next; target != list->sentinel; target = target->next) {
         if (target->data == value) {
-            if (node != NULL) {
-                *node = target;
+
+            if (iter != NULL) {
+                *iter = target;
             }
             return true;
         }

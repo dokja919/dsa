@@ -14,7 +14,7 @@ BraceWrapping:
 Cpp11BracedListStyle: false
 
 # Pointers
-PointerAlignment: Right
+PointerAlignment: Left
 
 # Line Length
 ColumnLimit: 0
