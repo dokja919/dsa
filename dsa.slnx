@@ -16,5 +16,4 @@
   <Project Path="10_algorithmic_paradigm/10_algorithmic_paradigm.vcxproj" Id="9d197b00-74ea-415f-a61e-ef451faad936" />
   <Project Path="disjoint_set/disjoint_set.vcxproj" Id="a9c581ad-befe-4773-a0ca-85d3a35d3362" />
   <Project Path="etc/etc.vcxproj" Id="7bb69846-d080-471d-83b9-0feb25c6fc17" />
-  <Project Path="unordered_set_map/unordered_set_map.vcxproj" Id="421830ed-f794-4c33-9fa2-933fec5bbd44" />
 </Solution>
