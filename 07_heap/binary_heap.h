@@ -12,7 +12,8 @@ typedef struct BinaryHeap BPriorityQueue;
 BPriorityQueue* b_create(void);
 void b_destroy(BPriorityQueue* heap);
 bool b_push(BPriorityQueue* heap, BItem data);
-int b_pop(BPriorityQueue* heap);
+bool b_peek(BPriorityQueue* heap, BItem* out_data);
+bool b_pop(BPriorityQueue* heap, BItem* out_data);
 size_t b_size(BPriorityQueue* heap);
 bool b_is_empty(BPriorityQueue* heap);
 
