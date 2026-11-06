@@ -2,11 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define INITIAL_CAPACITY 32
-
-struct BItem {
-    int priority;
-};
+#define INITIAL_CAPACITY 8 // 16
 
 struct BinaryHeap {
     BItem* items;
@@ -40,25 +36,26 @@ void b_destroy(BPriorityQueue* heap)
     free(heap->items);
     free(heap);
 }
-void b_push(BPriorityQueue* heap, int priority)
+bool b_push(BPriorityQueue* heap, BItem data)
 {
     if (heap == NULL) {
-        return;
+        return false;
     }
-
     size_t index = heap->size;
 
     while (index > 0) {
         size_t parent = (index - 1) / 2;
 
-        if (priority <= heap->items[parent].priority) {
+        if (data.priority <= heap->items[parent].priority) {
             break;
         }
         heap->items[index] = heap->items[parent];
         index = parent;
     }
-    heap->items[index] = (BItem){ priority };
+    heap->items[index] = data;
     heap->size++;
+
+    return true;
 }
 int b_pop(BPriorityQueue* heap)
 {
@@ -74,10 +71,9 @@ int b_pop(BPriorityQueue* heap)
         heap->items[0] = heap->items[heap->size];
         b_heapify(heap->items, heap->size, 0);
     }
-
     return top;
 }
-void b_heapify(BItem* items, size_t size, size_t parent)
+static void b_heapify(BItem* items, size_t size, size_t parent)
 {
     size_t left = 2 * parent + 1;
     if (left >= size) {
@@ -102,7 +98,7 @@ void b_heapify(BItem* items, size_t size, size_t parent)
 
     b_heapify(items, size, child);
 }
-int b_is_empty(BPriorityQueue* heap)
+bool b_is_empty(BPriorityQueue* heap)
 {
     return heap == NULL || heap->size == 0;
 }
