@@ -78,10 +78,10 @@ bool sc_insert(SCSet* table, SCItem data)
 
     return true;
 }
-bool sc_search(SCSet* table, int key, SCIter* iter)
+bool sc_search(SCSet* table, int key, SCIter* out_iter)
 {
-    if (iter != NULL) {
-        *iter = NULL;
+    if (out_iter != NULL) {
+        *out_iter = NULL;
     }
     if (table == NULL) {
         return false;
@@ -92,21 +92,20 @@ bool sc_search(SCSet* table, int key, SCIter* iter)
 
         if (current->data.key == key) {
 
-            if (iter != NULL) {
-                *iter = current;
+            if (out_iter != NULL) {
+                *out_iter = current;
             }
             return true;
         }
     }
     return false;
 }
-bool sc_get(SCIter iter, SCItem* data)
+bool sc_get(SCIter iter, SCItem* out_data)
 {
-    if (iter == NULL || data == NULL) {
+    if (iter == NULL || out_data == NULL) {
         return false;
     }
-
-    *data = iter->data;
+    *out_data = iter->data;
     return true;
 }
 static void node_unlink(SCSet* table, size_t index, SCNode* node)
@@ -121,7 +120,7 @@ static void node_unlink(SCSet* table, size_t index, SCNode* node)
         node->next->prev = node->prev;
     }
 }
-bool sc_delete(SCSet* table, int key, SCItem* data)
+bool sc_delete(SCSet* table, int key, SCItem* out_data)
 {
     if (table == NULL) {
         return false;
@@ -133,8 +132,8 @@ bool sc_delete(SCSet* table, int key, SCItem* data)
 
         if (target->data.key == key) {
 
-            if (data != NULL) {
-                *data = target->data;
+            if (out_data != NULL) {
+                *out_data = target->data;
             }
             node_unlink(table, index, target);
             free(target);
@@ -144,15 +143,15 @@ bool sc_delete(SCSet* table, int key, SCItem* data)
     }
     return false;
 }
-bool sc_delete_iter(SCSet* table, SCIter target, SCItem* data)
+bool sc_delete_iter(SCSet* table, SCIter target, SCItem* out_data)
 {
     if (table == NULL || target == NULL) {
         return false;
     }
     size_t index = sc_hash(target->data.key);
 
-    if (data != NULL) {
-        *data = target->data;
+    if (out_data != NULL) {
+        *out_data = target->data;
     }
     node_unlink(table, index, target);
     free(target);
