@@ -2,19 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _l_node {
+typedef struct LNode {
     LItem data;
-    struct _l_node *next;
+    struct LNode* next;
 } l_node;
 
 struct LinkedQueue {
-    l_node *rear;
-    l_node *front;
+    l_node* rear;
+    l_node* front;
 };
 
-LQueue *l_create(void)
+LQueue* l_create(void)
 {
-    LQueue *queue = malloc(sizeof(*queue));
+    LQueue* queue = malloc(sizeof(*queue));
     if (queue == NULL) {
         return NULL;
     }
@@ -23,11 +23,7 @@ LQueue *l_create(void)
 
     return queue;
 }
-static void l_node_destroy(l_node *node)
-{
-    free(node);
-}
-void l_destroy(LQueue *queue)
+void l_destroy(LQueue* queue)
 {
     if (queue == NULL) {
         return;
@@ -37,9 +33,9 @@ void l_destroy(LQueue *queue)
     }
     free(queue);
 }
-static l_node *l_node_create(int value)
+static l_node* node_create(int value)
 {
-    l_node *new_node = malloc(sizeof(*new_node));
+    l_node* new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
         return NULL;
     }
@@ -49,12 +45,12 @@ static l_node *l_node_create(int value)
 
     return new_node;
 }
-void l_enqueue(LQueue *queue, int value)
+void l_enqueue(LQueue* queue, int value)
 {
     if (queue == NULL) {
         return;
     }
-    l_node *new_rear = l_node_create(value);
+    l_node* new_rear = node_create(value);
     if (new_rear == NULL) {
         return;
     }
@@ -65,35 +61,35 @@ void l_enqueue(LQueue *queue, int value)
     }
     queue->rear = new_rear;
 }
-LItem l_dequeue(LQueue *queue)
+LItem l_dequeue(LQueue* queue)
 {
     if (l_is_empty(queue)) {
         return 0;
     }
-    l_node *target = queue->front;
+    l_node* target = queue->front;
     queue->front = target->next;
 
     if (queue->front == NULL) {
         queue->rear = NULL;
     }
     LItem data = target->data;
-    l_node_destroy(target);
+    free(target);
     return data;
 }
-LItem l_peek(LQueue *queue)
+LItem l_peek(LQueue* queue)
 {
     if (l_is_empty(queue)) {
         return 0;
     }
     return queue->front->data;
 }
-size_t l_size(LQueue *queue)
+size_t l_size(LQueue* queue)
 {
     if (queue == NULL) {
         return 0;
     }
     size_t size = 0;
-    l_node *current = queue->front;
+    l_node* current = queue->front;
 
     while (current) {
         size++;
@@ -102,7 +98,7 @@ size_t l_size(LQueue *queue)
 
     return size;
 }
-bool l_is_empty(LQueue *queue)
+bool l_is_empty(LQueue* queue)
 {
     return queue == NULL || queue->front == NULL;
 }

@@ -1,11 +1,11 @@
+#include "l_p_hash_table.h"
 #include "s_c_hash_table.h"
 #include <stdio.h>
 
-static void sc_test(void)
+void sc_test(void)
 {
     SCSet* table = sc_create();
     if (table == NULL) {
-        fprintf(stderr, "Failed to create hash table.\n");
         return;
     }
 
@@ -29,9 +29,9 @@ static void sc_test(void)
     printf("\n--- Search ---\n");
     for (size_t i = 0; i < item_count; ++i) {
         SCIter iter = NULL;
-        bool found = sc_search(table, keys[i], &iter);
+        bool found = sc_search(table, keys[i], &iter, &data);
 
-        if (found && sc_get(iter, &data)) {
+        if (found) {
             printf("Search key %d: PASS (found %d)\n", keys[i], data.key);
         } else {
             printf("Search key %d: FAIL\n", keys[i]);
@@ -46,11 +46,11 @@ static void sc_test(void)
     }
 
     printf("Search deleted key 42: %s\n",
-           sc_search(table, 42, NULL) ? "FAIL" : "PASS");
+           sc_search(table, 42, NULL, NULL) ? "FAIL" : "PASS");
 
     printf("\n--- Delete by iterator ---\n");
     SCIter iter = NULL;
-    if (sc_search(table, 58, &iter) && sc_delete_iter(table, iter, &data)) {
+    if (sc_search(table, 58, &iter, &data) && sc_delete_iter(table, iter, &data)) {
         printf("Delete key 58 by iterator: PASS (deleted %d)\n", data.key);
     } else {
         printf("Delete key 58 by iterator: FAIL\n");
@@ -58,13 +58,46 @@ static void sc_test(void)
 
     sc_destroy(table);
 }
+void lp_test(void)
+{
+    LPSet* table = lp_create();
+    if (table == NULL) {
+        return;
+    }
+    LPSlot data;
+
+    lp_insert(table, 12);
+    lp_insert(table, 20);
+    lp_insert(table, 28);
+    lp_insert(table, 35);
+
+    printf("\n=== Search ===\n");
+
+    if (lp_search(table, 22, &data)) {
+        printf("Found: key = 22\n", data.key);
+    }
+    if (lp_search(table, 28, &data)) {
+        printf("Found: key = 22\n", data.key);
+    }
+    if (lp_search(table, 20, &data)) {
+        printf("Found: key = 22\n", data.key);
+    }
+    printf("\n=== Delete ===\n");
+    if (lp_delete(table, 20)) {
+        printf("Key 20 deleted.\n");
+    }
+    lp_destroy(table);
+}
 int main(void)
 {
-    size_t table_number = 0;
+    size_t table_number = 1;
 
     switch (table_number) {
     case 0:
         sc_test();
+        break;
+    case 1:
+        lp_test();
         break;
     }
 

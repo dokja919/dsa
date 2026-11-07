@@ -1,7 +1,9 @@
 #include "s_c_hash_table.h"
 #include <stdlib.h>
 
-enum { SC_CAPACITY = 16 };
+enum {
+    CAPACITY = 16
+};
 
 typedef struct SCNode {
     SCItem data;
@@ -10,7 +12,7 @@ typedef struct SCNode {
 } SCNode;
 
 struct SeparateChainingHashTable {
-    SCNode* buckets[SC_CAPACITY];
+    SCNode* buckets[CAPACITY];
 };
 SCSet* sc_create(void)
 {
@@ -21,7 +23,7 @@ void sc_destroy(SCSet* table)
     if (table == NULL) {
         return;
     }
-    for (size_t i = 0; i < SC_CAPACITY; i++) {
+    for (size_t i = 0; i < CAPACITY; i++) {
         SCNode* current = table->buckets[i];
 
         while (current != NULL) {
@@ -34,10 +36,10 @@ void sc_destroy(SCSet* table)
 }
 size_t sc_hash(int key)
 {
-    int remainder = key % SC_CAPACITY;
+    int remainder = key % CAPACITY;
 
     if (remainder < 0) {
-        remainder += SC_CAPACITY;
+        remainder += CAPACITY;
     }
     return (size_t)remainder;
 }
@@ -78,7 +80,7 @@ bool sc_insert(SCSet* table, SCItem data)
 
     return true;
 }
-bool sc_search(SCSet* table, int key, SCIter* out_iter)
+bool sc_search(SCSet* table, int key, SCIter* out_iter, SCItem* out_data)
 {
     if (out_iter != NULL) {
         *out_iter = NULL;
@@ -95,18 +97,13 @@ bool sc_search(SCSet* table, int key, SCIter* out_iter)
             if (out_iter != NULL) {
                 *out_iter = current;
             }
+            if (out_data != NULL) {
+                *out_data = current->data;
+            }
             return true;
         }
     }
     return false;
-}
-bool sc_get(SCIter iter, SCItem* out_data)
-{
-    if (iter == NULL || out_data == NULL) {
-        return false;
-    }
-    *out_data = iter->data;
-    return true;
 }
 static void node_unlink(SCSet* table, size_t index, SCNode* node)
 {

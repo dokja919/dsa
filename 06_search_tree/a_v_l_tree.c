@@ -9,16 +9,16 @@ typedef struct {
 struct AVLNode {
     AVLItem data;
     size_t height;
-    struct AVLNode *left;
-    struct AVLNode *right;
+    struct AVLNode* left;
+    struct AVLNode* right;
 };
 struct AVLTree {
-    AVLNode *root;
+    AVLNode* root;
 };
 
-AVLOrderedSet *avl_create(void)
+AVLOrderedSet* avl_create(void)
 {
-    AVLOrderedSet *tree = malloc(sizeof(*tree));
+    AVLOrderedSet* tree = malloc(sizeof(*tree));
     if (tree == NULL) {
         return NULL;
     }
@@ -26,30 +26,26 @@ AVLOrderedSet *avl_create(void)
 
     return tree;
 }
-static void avl_node_destroy(AVLNode *node)
-{
-    free(node);
-}
-static void avl_subtree_destroy(AVLNode *subtree)
+static void subtree_destroy(AVLNode* subtree)
 {
     if (subtree == NULL) {
         return;
     }
-    avl_subtree_destroy(subtree->left);
-    avl_subtree_destroy(subtree->right);
-    avl_node_destroy(subtree);
+    subtree_destroy(subtree->left);
+    subtree_destroy(subtree->right);
+    free(subtree);
 }
-void avl_destroy(AVLOrderedSet *tree)
+void avl_destroy(AVLOrderedSet* tree)
 {
     if (tree == NULL) {
         return;
     }
-    avl_subtree_destroy(tree->root);
+    subtree_destroy(tree->root);
     free(tree);
 }
-static AVLNode *avl_node_create(int key)
+static AVLNode* node_create(int key)
 {
-    AVLNode *new_node = malloc(sizeof(*new_node));
+    AVLNode* new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
         return NULL;
     }
@@ -61,95 +57,95 @@ static AVLNode *avl_node_create(int key)
 
     return new_node;
 }
-static size_t avl_get_height(AVLNode *node)
+static size_t get_height(AVLNode* node)
 {
     return node ? node->height : 0;
 }
-static void avl_update_height(AVLNode *node)
+static void update_height(AVLNode* node)
 {
     if (node == NULL) {
         return;
     }
-    size_t left = avl_get_height(node->left);
-    size_t right = avl_get_height(node->right);
+    size_t left = get_height(node->left);
+    size_t right = get_height(node->right);
     node->height = 1 + (left > right ? left : right);
 }
-static AVLNode *avl_rotate_left(AVLNode *x)
+static AVLNode* rotate_left(AVLNode* x)
 {
     if (x == NULL) {
         return NULL;
     }
-    AVLNode *y = x->right;
+    AVLNode* y = x->right;
     x->right = y->left;
     y->left = x;
-    avl_update_height(x);
-    avl_update_height(y);
+    update_height(x);
+    update_height(y);
     return y;
 }
-static AVLNode *avl_rotate_right(AVLNode *y)
+static AVLNode* rotate_right(AVLNode* y)
 {
     if (y == NULL) {
         return NULL;
     }
-    AVLNode *x = y->left;
+    AVLNode* x = y->left;
     y->left = x->right;
     x->right = y;
-    avl_update_height(y);
-    avl_update_height(x);
+    update_height(y);
+    update_height(x);
     return x;
 }
-static int avl_balancefactor(AVLNode *node)
+static int balancefactor(AVLNode* node)
 {
-    int left = (int)avl_get_height(node->left);
-    int right = (int)avl_get_height(node->right);
+    int left = (int)get_height(node->left);
+    int right = (int)get_height(node->right);
     return left - right;
 }
-static AVLNode *avl_rebalance(AVLNode *node)
+static AVLNode* rebalance(AVLNode* node)
 {
     if (node == NULL) {
         return NULL;
     }
-    avl_update_height(node);
-    int balance = avl_balancefactor(node);
+    update_height(node);
+    int balance = balancefactor(node);
 
     if (balance > 1) {
-        if (avl_balancefactor(node->left) < 0) {
-            node->left = avl_rotate_left(node->left);
+        if (balancefactor(node->left) < 0) {
+            node->left = rotate_left(node->left);
         }
 
-        return avl_rotate_right(node);
+        return rotate_right(node);
     }
     if (balance < -1) {
 
-        if (avl_balancefactor(node->right) > 0) {
-            node->right = avl_rotate_right(node->right);
+        if (balancefactor(node->right) > 0) {
+            node->right = rotate_right(node->right);
         }
-        return avl_rotate_left(node);
+        return rotate_left(node);
     }
     return node;
 }
-static AVLNode *avl_node_insert(AVLNode *node, int key)
+static AVLNode* node_insert(AVLNode* node, int key)
 {
     if (node == NULL) {
-        return avl_node_create(key);
+        return node_create(key);
     }
     if (key < node->data.key) {
-        node->left = avl_node_insert(node->left, key);
+        node->left = node_insert(node->left, key);
     } else if (key > node->data.key) {
-        node->right = avl_node_insert(node->right, key);
+        node->right = node_insert(node->right, key);
     } else {
         return node;
     }
-    return avl_rebalance(node);
+    return rebalance(node);
 }
-void avl_insert(AVLOrderedSet *tree, int key)
+void avl_insert(AVLOrderedSet* tree, int key)
 {
     if (tree == NULL) {
         return;
     }
-    tree->root = avl_node_insert(tree->root, key);
+    tree->root = node_insert(tree->root, key);
 }
-static AVLNode *avl_get_min(AVLNode *node)
+static AVLNode* get_min(AVLNode* node)
 {
     if (node == NULL) {
         return NULL;
@@ -159,47 +155,47 @@ static AVLNode *avl_get_min(AVLNode *node)
     }
     return node;
 }
-static AVLNode *avl_node_delete(AVLNode *node, int key)
+static AVLNode* node_delete(AVLNode* node, int key)
 {
     if (node == NULL) {
         return NULL;
     }
 
     if (key < node->data.key) {
-        node->left = avl_node_delete(node->left, key);
+        node->left = node_delete(node->left, key);
     } else if (key > node->data.key) {
-        node->right = avl_node_delete(node->right, key);
+        node->right = node_delete(node->right, key);
     } else {
         if (node->left == NULL || node->right == NULL) {
-            AVLNode *child = NULL;
+            AVLNode* child = NULL;
             if (node->left) {
                 child = node->left;
             } else {
                 child = node->right;
             }
-            avl_node_destroy(node);
+            free(node);
             return child;
         }
-        AVLNode *successor = avl_get_min(node->right);
+        AVLNode* successor = get_min(node->right);
         node->data.key = successor->data.key;
-        node->right = avl_node_delete(node->right, successor->data.key);
+        node->right = node_delete(node->right, successor->data.key);
     }
 
-    return avl_rebalance(node);
+    return rebalance(node);
 }
-void avl_delete(AVLOrderedSet *tree, int key)
+void avl_delete(AVLOrderedSet* tree, int key)
 {
     if (tree == NULL) {
         return;
     }
-    tree->root = avl_node_delete(tree->root, key);
+    tree->root = node_delete(tree->root, key);
 }
-AVLNode *avl_search(AVLOrderedSet *tree, int key)
+AVLNode* avl_search(AVLOrderedSet* tree, int key)
 {
     if (tree == NULL) {
         return NULL;
     }
-    AVLNode *target = tree->root;
+    AVLNode* target = tree->root;
     while (target != NULL) {
         if (key == target->data.key) {
             return target;
@@ -211,27 +207,27 @@ AVLNode *avl_search(AVLOrderedSet *tree, int key)
     }
     return NULL;
 }
-int avl_get(AVLNode *node)
+int avl_get(AVLNode* node)
 {
     if (node == NULL) {
         return 0;
     }
     return node->data.key;
 }
-static void avl_inorder(AVLNode *node)
+static void inorder(AVLNode* node)
 {
     if (node == NULL) {
         return;
     }
-    avl_inorder(node->left);
+    inorder(node->left);
     printf("%d ", node->data.key);
-    avl_inorder(node->right);
+    inorder(node->right);
 }
-void avl_print(AVLOrderedSet *tree)
+void avl_print(AVLOrderedSet* tree)
 {
     if (tree == NULL || tree->root == NULL) {
         return;
     }
-    avl_inorder(tree->root);
+    inorder(tree->root);
     printf("\n");
 }

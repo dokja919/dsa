@@ -4,26 +4,26 @@
 
 struct LNode {
     LItem data;
-    struct LNode *left;
-    struct LNode *right;
+    struct LNode* left;
+    struct LNode* right;
 };
 
 struct LinkedBinaryTree {
-    LNode *root;
+    LNode* root;
 };
 
-void l_subtree_destroy(LNode *node)
+void l_subtree_destroy(LNode* node)
 {
     if (node == NULL) {
         return;
     }
     l_subtree_destroy(node->left);
     l_subtree_destroy(node->right);
-    l_node_destroy(node);
+    free(node);
 }
-LNode *l_node_create(int value)
+LNode* l_node_create(int value)
 {
-    LNode *new_node = malloc(sizeof(*new_node));
+    LNode* new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
         return NULL;
     }
@@ -33,17 +33,13 @@ LNode *l_node_create(int value)
 
     return new_node;
 }
-void l_node_destroy(LNode *node)
-{
-    free(node);
-}
-LNode *l_set_left(LNode *parent, int value)
+LNode* l_set_left(LNode* parent, int value)
 {
     if (parent == NULL) {
         return NULL;
     }
 
-    LNode *new_child = l_node_create(value);
+    LNode* new_child = l_node_create(value);
     if (new_child == NULL) {
         return NULL;
     }
@@ -56,13 +52,13 @@ LNode *l_set_left(LNode *parent, int value)
 
     return new_child;
 }
-LNode *l_set_right(LNode *parent, int value)
+LNode* l_set_right(LNode* parent, int value)
 {
     if (parent == NULL) {
         return NULL;
     }
 
-    LNode *new_child = l_node_create(value);
+    LNode* new_child = l_node_create(value);
     if (new_child == NULL) {
         return NULL;
     }
@@ -75,21 +71,21 @@ LNode *l_set_right(LNode *parent, int value)
 
     return new_child;
 }
-LNode *l_get_left(LNode *node)
+LNode* l_get_left(LNode* node)
 {
     return node == NULL ? NULL : node->left;
 }
 
-LNode *l_get_right(LNode *node)
+LNode* l_get_right(LNode* node)
 {
     return node == NULL ? NULL : node->right;
 }
 
-int l_get(LNode *node)
+int l_get(LNode* node)
 {
     return node == NULL ? 0 : node->data;
 }
-void l_preorder(LNode *node)
+void l_preorder(LNode* node)
 {
     if (node == NULL) {
         return;
@@ -98,7 +94,7 @@ void l_preorder(LNode *node)
     l_preorder(node->left);
     l_preorder(node->right);
 }
-void l_inorder(LNode *node)
+void l_inorder(LNode* node)
 {
     if (node == NULL) {
         return;
@@ -107,7 +103,7 @@ void l_inorder(LNode *node)
     printf("%d ", node->data);
     l_inorder(node->right);
 }
-void l_postorder(LNode *node)
+void l_postorder(LNode* node)
 {
     if (node == NULL) {
         return;

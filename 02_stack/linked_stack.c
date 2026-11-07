@@ -2,18 +2,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _l_node {
+typedef struct LNode {
     LItem data;
-    struct _l_node *next;
-} l_node;
+    struct LNode* next;
+} LNode;
 
 struct LinkedStack {
-    l_node *top;
+    LNode* top;
 };
 
-LStack *l_create(void)
+LStack* l_create(void)
 {
-    LStack *stack = malloc(sizeof(*stack));
+    LStack* stack = malloc(sizeof(*stack));
 
     if (stack == NULL) {
         return NULL;
@@ -23,11 +23,7 @@ LStack *l_create(void)
 
     return stack;
 }
-static void l_node_destroy(l_node *node)
-{
-    free(node);
-}
-void l_destroy(LStack *stack)
+void l_destroy(LStack* stack)
 {
     if (stack == NULL) {
         return;
@@ -39,9 +35,9 @@ void l_destroy(LStack *stack)
 
     free(stack);
 }
-static l_node *l_node_create(int value)
+static LNode* node_create(int value)
 {
-    l_node *new_node = malloc(sizeof(*new_node));
+    LNode* new_node = malloc(sizeof(*new_node));
 
     if (new_node == NULL) {
         return NULL;
@@ -52,13 +48,13 @@ static l_node *l_node_create(int value)
 
     return new_node;
 }
-void l_push(LStack *stack, int value)
+void l_push(LStack* stack, int value)
 {
     if (stack == NULL) {
         return;
     }
 
-    l_node *new_top = l_node_create(value);
+    LNode* new_top = node_create(value);
 
     if (new_top == NULL) {
         return;
@@ -68,21 +64,21 @@ void l_push(LStack *stack, int value)
     stack->top = new_top;
 }
 
-LItem l_pop(LStack *stack)
+LItem l_pop(LStack* stack)
 {
     if (l_is_empty(stack)) {
         return 0;
     }
 
-    l_node *target = stack->top;
+    LNode* target = stack->top;
     stack->top = target->next;
 
     LItem value = target->data;
-    l_node_destroy(target);
+    free(target);
     return value;
 }
 
-LItem l_top(LStack *stack)
+LItem l_top(LStack* stack)
 {
     if (l_is_empty(stack)) {
         return 0;
@@ -90,14 +86,14 @@ LItem l_top(LStack *stack)
 
     return stack->top->data;
 }
-size_t l_size(LStack *stack)
+size_t l_size(LStack* stack)
 {
     if (stack == NULL) {
         return 0;
     }
 
     size_t size = 0;
-    l_node *current = stack->top;
+    LNode* current = stack->top;
 
     while (current != NULL) {
         size++;
@@ -106,7 +102,7 @@ size_t l_size(LStack *stack)
 
     return size;
 }
-bool l_is_empty(LStack *stack)
+bool l_is_empty(LStack* stack)
 {
     return stack == NULL || stack->top == NULL;
 }

@@ -2,19 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _cl_node {
+typedef struct CLNode {
     CLItem data;
-    struct _cl_node *next;
-} cl_node;
+    struct CLNode* next;
+} CLNode;
 
 struct CircularLinkedList {
-    cl_node *tail;
+    CLNode* tail;
     size_t size;
 };
 
-CLList *cl_create(void)
+CLList* cl_create(void)
 {
-    CLList *list = malloc(sizeof(*list));
+    CLList* list = malloc(sizeof(*list));
     if (list == NULL) {
         return NULL;
     }
@@ -24,9 +24,9 @@ CLList *cl_create(void)
 
     return list;
 }
-static cl_node *cl_node_create(int value)
+static CLNode* node_create(int value)
 {
-    cl_node *new_node = malloc(sizeof(*new_node));
+    CLNode* new_node = malloc(sizeof(*new_node));
     if (new_node == NULL) {
         return NULL;
     }
@@ -36,12 +36,12 @@ static cl_node *cl_node_create(int value)
 
     return new_node;
 }
-void cl_insert_at(CLList *list, size_t index, int value)
+void cl_insert_at(CLList* list, size_t index, int value)
 {
     if (list == NULL || index > list->size) {
         return;
     }
-    cl_node *new_node = cl_node_create(value);
+    CLNode* new_node = node_create(value);
     if (new_node == NULL) {
         return;
     }
@@ -49,7 +49,7 @@ void cl_insert_at(CLList *list, size_t index, int value)
         new_node->next = new_node;
         list->tail = new_node;
     } else {
-        cl_node *prev = list->tail;
+        CLNode* prev = list->tail;
 
         for (size_t i = 0; i < index; i++) {
             prev = prev->next;
@@ -63,21 +63,17 @@ void cl_insert_at(CLList *list, size_t index, int value)
     }
     list->size++;
 }
-static void cl_node_destroy(cl_node *node)
-{
-    free(node);
-}
-CLItem cl_delete_at(CLList *list, size_t index)
+CLItem cl_delete_at(CLList* list, size_t index)
 {
     if (list == NULL || index >= list->size) {
         return 0;
     }
-    cl_node *prev = list->tail;
+    CLNode* prev = list->tail;
 
     for (size_t i = 0; i < index; i++) {
         prev = prev->next;
     }
-    cl_node *target = prev->next;
+    CLNode* target = prev->next;
 
     if (prev == target) {
         list->tail = NULL;
@@ -89,11 +85,11 @@ CLItem cl_delete_at(CLList *list, size_t index)
         }
     }
     CLItem data = target->data;
-    cl_node_destroy(target);
+    free(target);
     list->size--;
     return data;
 }
-void cl_destroy(CLList *list)
+void cl_destroy(CLList* list)
 {
     if (list == NULL) {
         return;
@@ -104,7 +100,7 @@ void cl_destroy(CLList *list)
     }
     free(list);
 }
-CLItem cl_get(CLList *list, size_t index)
+CLItem cl_get(CLList* list, size_t index)
 {
     if (list == NULL || index >= list->size) {
         return 0;
@@ -114,18 +110,18 @@ CLItem cl_get(CLList *list, size_t index)
         return list->tail->data;
     }
 
-    cl_node *target = list->tail->next;
+    CLNode* target = list->tail->next;
     for (size_t i = 0; i < index; i++) {
         target = target->next;
     }
     return target->data;
 }
-void cl_print(CLList *list)
+void cl_print(CLList* list)
 {
     if (list == NULL || list->tail == NULL) {
         return;
     }
-    cl_node *current = list->tail->next;
+    CLNode* current = list->tail->next;
 
     do {
         printf("%d -> ", current->data);
@@ -134,7 +130,7 @@ void cl_print(CLList *list)
 
     printf("head\n");
 }
-size_t cl_size(CLList *list)
+size_t cl_size(CLList* list)
 {
     return list ? list->size : 0;
 }

@@ -29,5 +29,8 @@
     <ClInclude Include="s_c_hash_table.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="l_p_hash_table.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

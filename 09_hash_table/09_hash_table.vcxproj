@@ -24,6 +24,7 @@
     <ClCompile Include="s_c_hash_table.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="l_p_hash_table.h" />
     <ClInclude Include="s_c_hash_table.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
