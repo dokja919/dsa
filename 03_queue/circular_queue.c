@@ -4,15 +4,15 @@
 #define INITIAL_CAPACITY 8 // 16
 
 struct CircularQueue {
-    CItem *items;
+    CItem* items;
     size_t capacity;
     size_t front;
     size_t size;
 };
 
-CQueue *c_create(void)
+CQueue* c_create(void)
 {
-    CQueue *queue = malloc(sizeof(*queue));
+    CQueue* queue = malloc(sizeof(*queue));
     if (queue == NULL) {
         return NULL;
     }
@@ -27,7 +27,7 @@ CQueue *c_create(void)
 
     return queue;
 }
-void c_destroy(CQueue *queue)
+void c_destroy(CQueue* queue)
 {
     if (queue == NULL) {
         return;
@@ -35,26 +35,38 @@ void c_destroy(CQueue *queue)
     free(queue->items);
     free(queue);
 }
-bool c_enqueue(CQueue *queue, CItem data)
+static bool ensure_capacity(CQueue* queue)
 {
     if (queue == NULL) {
         return false;
     }
-    if (queue->size == queue->capacity) {
-        size_t new_capacity = queue->capacity * 2;
+    if (queue->size < queue->capacity) {
+        return true;
+    }
+    size_t new_capacity = queue->capacity * 2;
 
-        CItem *new_items = malloc(sizeof(*new_items) * new_capacity);
-        if (new_items == NULL) {
-            return false;
-        }
-        for (size_t i = 0; i < queue->size; i++) {
-            size_t j = (queue->front + i) % queue->capacity;
-            new_items[i] = queue->items[j];
-        }
-        free(queue->items);
-        queue->items = new_items;
-        queue->capacity = new_capacity;
-        queue->front = 0;
+    CItem* new_items = malloc(sizeof(*new_items) * new_capacity);
+    if (new_items == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < queue->size; i++) {
+        size_t j = (queue->front + i) % queue->capacity;
+        new_items[i] = queue->items[j];
+    }
+    free(queue->items);
+    queue->items = new_items;
+    queue->capacity = new_capacity;
+    queue->front = 0;
+
+    return true;
+}
+bool c_enqueue(CQueue* queue, CItem data)
+{
+    if (queue == NULL) {
+        return false;
+    }
+    if (ensure_capacity(queue) == false) {
+        return false;
     }
     size_t rear = (queue->front + queue->size) % queue->capacity;
     queue->items[rear] = data;
@@ -62,7 +74,7 @@ bool c_enqueue(CQueue *queue, CItem data)
 
     return true;
 }
-bool c_dequeue(CQueue *queue, CItem *out_data)
+bool c_dequeue(CQueue* queue, CItem* out_data)
 {
     if (c_is_empty(queue)) {
         return false;
@@ -75,7 +87,7 @@ bool c_dequeue(CQueue *queue, CItem *out_data)
 
     return true;
 }
-bool c_peek(CQueue *queue, CItem *out_data)
+bool c_peek(CQueue* queue, CItem* out_data)
 {
     if (c_is_empty(queue)) {
         return false;
@@ -85,11 +97,11 @@ bool c_peek(CQueue *queue, CItem *out_data)
     }
     return true;
 }
-size_t c_size(CQueue *queue)
+size_t c_size(CQueue* queue)
 {
     return queue != NULL ? queue->size : 0;
 }
-bool c_is_empty(CQueue *queue)
+bool c_is_empty(CQueue* queue)
 {
     return queue == NULL || queue->size == 0;
 }

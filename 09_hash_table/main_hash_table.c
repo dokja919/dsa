@@ -64,6 +64,7 @@ void lp_test(void)
     if (table == NULL) {
         return;
     }
+    size_t index;
     LPSlot data;
 
     lp_insert(table, 12);
@@ -73,19 +74,24 @@ void lp_test(void)
 
     printf("\n=== Search ===\n");
 
-    if (lp_search(table, 22, &data)) {
-        printf("Found: key = 22\n", data.key);
+    if (lp_search(table, 22, &index, &data)) {
+        printf("Found: key = 22\n");
     }
-    if (lp_search(table, 28, &data)) {
-        printf("Found: key = 22\n", data.key);
+    if (lp_search(table, 28, &index, &data)) {
+        printf("Found: key = 28\n");
     }
-    if (lp_search(table, 20, &data)) {
-        printf("Found: key = 22\n", data.key);
+    if (lp_search(table, 20, &index, &data)) {
+        printf("Found: key = 20\n");
     }
     printf("\n=== Delete ===\n");
-    if (lp_delete(table, 20)) {
+    if (lp_delete(table, 20, &data)) {
         printf("Key 20 deleted.\n");
     }
+    printf("Search key 28 after deleting 20: %s\n",
+           lp_search(table, 28, NULL, NULL) ? "PASS" : "FAIL");
+
+    printf("Search deleted key 20: %s\n",
+           !lp_search(table, 20, NULL, NULL) ? "PASS" : "FAIL");
     lp_destroy(table);
 }
 int main(void)
@@ -100,6 +106,5 @@ int main(void)
         lp_test();
         break;
     }
-
     return 0;
 }

@@ -34,15 +34,6 @@ void sc_destroy(SCSet* table)
     }
     free(table);
 }
-size_t sc_hash(int key)
-{
-    int remainder = key % CAPACITY;
-
-    if (remainder < 0) {
-        remainder += CAPACITY;
-    }
-    return (size_t)remainder;
-}
 static SCNode* node_create(SCItem data)
 {
     SCNode* new_node = malloc(sizeof(*new_node));
@@ -54,6 +45,10 @@ static SCNode* node_create(SCItem data)
     new_node->prev = NULL;
 
     return new_node;
+}
+static size_t sc_hash(int key)
+{
+    return (size_t)key % CAPACITY;
 }
 bool sc_insert(SCSet* table, SCItem data)
 {

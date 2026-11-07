@@ -34,20 +34,32 @@ void b_destroy(BPriorityQueue* heap)
     free(heap->items);
     free(heap);
 }
+static bool ensure_capacity(BPriorityQueue* heap)
+{
+    if (heap == NULL) {
+        return false;
+    }
+    if (heap->size < heap->capacity) {
+        return true;
+    }
+    size_t new_capacity = heap->capacity * 2;
+
+    BItem* new_items = realloc(heap->items, sizeof(*new_items) * new_capacity);
+    if (new_items == NULL) {
+        return false;
+    }
+    heap->items = new_items;
+    heap->capacity = new_capacity;
+
+    return true;
+}
 bool b_push(BPriorityQueue* heap, BItem data)
 {
     if (heap == NULL) {
         return false;
     }
-    if (heap->size >= heap->capacity) {
-        size_t new_capacity = heap->capacity * 2;
-
-        BItem* new_data = realloc(heap->items, sizeof(*new_data) * new_capacity);
-        if (new_data == NULL) {
-            return false;
-        }
-        heap->items = new_data;
-        heap->capacity = new_capacity;
+    if (ensure_capacity(heap) == false) {
+        return false;
     }
     size_t index = heap->size;
 
