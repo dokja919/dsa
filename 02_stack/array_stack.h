@@ -10,8 +10,8 @@ typedef struct ArrayStack AStack;
 AStack* a_create(void);
 void a_destroy(AStack* stack);
 bool a_push(AStack* stack, AItem data);
-bool a_pop(AStack* stack, AItem* out_data);
-bool a_peek(AStack* stack, AItem* out_data);
+bool a_pop(AStack* stack, AItem* data_out);
+bool a_peek(AStack* stack, AItem* data_out);
 bool a_is_empty(AStack* stack);
 size_t a_size(AStack* stack);
 

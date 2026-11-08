@@ -77,12 +77,12 @@ bool b_push(BPriorityQueue* heap, BItem data)
 
     return true;
 }
-bool b_peek(BPriorityQueue* heap, BItem* out_data)
+bool b_peek(BPriorityQueue* heap, BItem* data_out)
 {
     if (heap == NULL || heap->size == 0) {
         return false;
     }
-    *out_data = heap->items[0];
+    *data_out = heap->items[0];
 
     return true;
 }
@@ -107,13 +107,13 @@ static void heapify(BPriorityQueue* heap, size_t parent)
 
     heapify(heap, child);
 }
-bool b_pop(BPriorityQueue* heap, BItem* out_data)
+bool b_pop(BPriorityQueue* heap, BItem* data_out)
 {
     if (heap == NULL || heap->size == 0) {
         return false;
     }
-    if (out_data != NULL) {
-        *out_data = heap->items[0];
+    if (data_out != NULL) {
+        *data_out = heap->items[0];
     }
     heap->size--;
 

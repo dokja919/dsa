@@ -77,13 +77,13 @@ bool cdl_insert_before(CDLList* list, CDLIter next, CDLItem data)
 
     return true;
 }
-bool cdl_delete_iter(CDLList* list, CDLIter target, CDLItem* out_data)
+bool cdl_delete_iter(CDLList* list, CDLIter target, CDLItem* data_out)
 {
     if (node_valid(list, target) == false) {
         return false;
     }
-    if (out_data != NULL) {
-        *out_data = target->data;
+    if (data_out != NULL) {
+        *data_out = target->data;
     }
     target->prev->next = target->next;
     target->next->prev = target->prev;
@@ -102,10 +102,10 @@ bool cdl_set(CDLIter iter, CDLItem data)
 
     return true;
 }
-bool cdl_search(CDLList* list, int value, CDLIter* out_iter, CDLItem* out_data)
+bool cdl_search(CDLList* list, int value, CDLIter* iter_out, CDLItem* data_out)
 {
-    if (out_iter != NULL) {
-        *out_iter = NULL;
+    if (iter_out != NULL) {
+        *iter_out = NULL;
     }
     if (list == NULL) {
         return false;
@@ -113,11 +113,11 @@ bool cdl_search(CDLList* list, int value, CDLIter* out_iter, CDLItem* out_data)
     for (CDLNode* target = list->sentinel->next; target != list->sentinel; target = target->next) {
         if (target->data == value) {
 
-            if (out_iter != NULL) {
-                *out_iter = target;
+            if (iter_out != NULL) {
+                *iter_out = target;
             }
-            if (out_data != NULL) {
-                *out_data = target->data;
+            if (data_out != NULL) {
+                *data_out = target->data;
             }
             return true;
         }
@@ -163,7 +163,7 @@ bool cdl_insert_at(CDLList* list, size_t index, CDLItem data)
 
     return true;
 }
-bool cdl_delete_at(CDLList* list, size_t index, CDLItem* out_data)
+bool cdl_delete_at(CDLList* list, size_t index, CDLItem* data_out)
 {
     if (list == NULL || index >= list->size) {
         return false;
@@ -173,21 +173,21 @@ bool cdl_delete_at(CDLList* list, size_t index, CDLItem* out_data)
     target->next->prev = target->prev;
     target->prev->next = target->next;
 
-    if (out_data != NULL) {
-        *out_data = target->data;
+    if (data_out != NULL) {
+        *data_out = target->data;
     }
     free(target);
     list->size--;
 
     return true;
 }
-bool cdl_get_at(CDLList* list, size_t index, CDLItem* out_data)
+bool cdl_get_at(CDLList* list, size_t index, CDLItem* data_out)
 {
     if (list == NULL || index >= list->size) {
         return false;
     }
-    if (out_data != NULL) {
-        *out_data = get_node_at(list, index)->data;
+    if (data_out != NULL) {
+        *data_out = get_node_at(list, index)->data;
     }
     return true;
 }

@@ -14,8 +14,8 @@ typedef struct SeparateChainingHashTable SCSet;
 SCSet* sc_create(void);
 void sc_destroy(SCSet* table);
 bool sc_insert(SCSet* table, SCItem data);
-bool sc_search(SCSet* table, int key, SCIter* out_iter, SCItem* out_data);
-bool sc_delete(SCSet* table, int key, SCItem* out_data);
-bool sc_delete_iter(SCSet* table, SCIter iter, SCItem* out_data);
+bool sc_search(SCSet* table, int key, SCIter* iter_out, SCItem* data_out);
+bool sc_delete(SCSet* table, int key, SCItem* data_out);
+bool sc_delete_iter(SCSet* table, SCIter iter, SCItem* data_out);
 
 #endif

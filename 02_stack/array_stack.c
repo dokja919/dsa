@@ -65,25 +65,25 @@ bool a_push(AStack* stack, AItem data)
 
     return true;
 }
-bool a_pop(AStack* stack, AItem* out_data)
+bool a_pop(AStack* stack, AItem* data_out)
 {
     if (a_is_empty(stack)) {
         return false;
     }
     stack->size--;
 
-    if (out_data != NULL) {
-        *out_data = stack->items[stack->size];
+    if (data_out != NULL) {
+        *data_out = stack->items[stack->size];
     }
     return true;
 }
-bool a_peek(AStack* stack, AItem* out_data)
+bool a_peek(AStack* stack, AItem* data_out)
 {
     if (a_is_empty(stack)) {
         return false;
     }
-    if (out_data != NULL) {
-        *out_data = stack->items[stack->size - 1];
+    if (data_out != NULL) {
+        *data_out = stack->items[stack->size - 1];
     }
     return true;
 }

@@ -10,8 +10,8 @@ typedef struct CircularQueue CQueue;
 CQueue* c_create(void);
 void c_destroy(CQueue* queue);
 bool c_enqueue(CQueue* queue, CItem data);
-bool c_dequeue(CQueue* queue, CItem* out_data);
-bool c_peek(CQueue* queue, CItem* out_data);
+bool c_dequeue(CQueue* queue, CItem* data_out);
+bool c_peek(CQueue* queue, CItem* data_out);
 bool c_is_empty(CQueue* queue);
 size_t c_size(CQueue* queue);
 

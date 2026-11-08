@@ -13,9 +13,9 @@ typedef struct BinarySearchTree BSOrderedSet;
 BSOrderedSet* bs_create(void);
 void bs_destroy(BSOrderedSet* tree);
 bool bs_insert(BSOrderedSet* tree, BSItem data);
-bool bs_search(BSOrderedSet* tree, int key, BSIter* out_iter);
-bool bs_delete(BSOrderedSet* tree, int key, BSItem* out_data);
-bool bs_delete_iter(BSOrderedSet* tree, BSIter target, BSItem* out_data);
+bool bs_search(BSOrderedSet* tree, int key, BSIter* iter_out);
+bool bs_delete(BSOrderedSet* tree, int key, BSItem* data_out);
+bool bs_delete_iter(BSOrderedSet* tree, BSIter target, BSItem* data_out);
 void bs_print(BSOrderedSet* tree);
 BSItem bs_get(BSIter iter);
 

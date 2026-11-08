@@ -124,10 +124,10 @@ static void transplant(BSOrderedSet* tree, BSNode* old_child, BSNode* new_child)
         new_child->parent = parent;
     }
 }
-bool bs_search(BSOrderedSet* tree, int key, BSIter* out_iter)
+bool bs_search(BSOrderedSet* tree, int key, BSIter* iter_out)
 {
-    if (out_iter != NULL) {
-        *out_iter = NULL;
+    if (iter_out != NULL) {
+        *iter_out = NULL;
     }
     if (tree == NULL) {
         return false;
@@ -138,8 +138,8 @@ bool bs_search(BSOrderedSet* tree, int key, BSIter* out_iter)
 
         if (key == target->data.key) {
 
-            if (out_iter != NULL) {
-                *out_iter = target;
+            if (iter_out != NULL) {
+                *iter_out = target;
             }
             return true;
         } else if (key < target->data.key) {
@@ -150,10 +150,10 @@ bool bs_search(BSOrderedSet* tree, int key, BSIter* out_iter)
     }
     return false;
 }
-static bool delete_node(BSOrderedSet* tree, BSNode* target, BSItem* out_data)
+static bool delete_node(BSOrderedSet* tree, BSNode* target, BSItem* data_out)
 {
-    if (out_data != NULL) {
-        *out_data = target->data;
+    if (data_out != NULL) {
+        *data_out = target->data;
     }
     // 2. 자식이 0개 또는 1개인 경우
     if (target->left == NULL || target->right == NULL) {
@@ -185,7 +185,7 @@ static bool delete_node(BSOrderedSet* tree, BSNode* target, BSItem* out_data)
 
     return true;
 }
-bool bs_delete(BSOrderedSet* tree, int key, BSItem* out_data)
+bool bs_delete(BSOrderedSet* tree, int key, BSItem* data_out)
 {
     if (tree == NULL) {
         return false;
@@ -195,14 +195,14 @@ bool bs_delete(BSOrderedSet* tree, int key, BSItem* out_data)
     if (bs_search(tree, key, &target) == false) {
         return false;
     }
-    return delete_node(tree, target, out_data);
+    return delete_node(tree, target, data_out);
 }
-bool bs_delete_iter(BSOrderedSet* tree, BSIter target, BSItem* out_data)
+bool bs_delete_iter(BSOrderedSet* tree, BSIter target, BSItem* data_out)
 {
     if (tree == NULL || target == NULL) {
         return false;
     }
-    return delete_node(tree, target, out_data);
+    return delete_node(tree, target, data_out);
 }
 BSItem bs_get(BSIter iter)
 {

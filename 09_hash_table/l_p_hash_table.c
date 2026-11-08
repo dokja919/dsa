@@ -144,15 +144,15 @@ bool lp_delete(LPSet* table, int key, LPSlot* data)
     if (table == NULL) {
         return false;
     }
-    size_t index;
     LPSlot target;
-    if (lp_search(table, key, &index, &target) == false) {
+    if (lp_search(table, key, NULL, &target) == false) {
         return false;
     }
-    table->slots[index].state = SLOT_DELETED;
     if (data != NULL) {
         *data = target;
     }
+    target.state = SLOT_DELETED;
+
     table->size--;
 
     return true;
