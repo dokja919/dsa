@@ -5,10 +5,10 @@
 
 void bs_test(void)
 {
-    BSOrderedSet *os = bs_create();
+    BSOrderedSet* os = bs_create();
     int keys[] = { 10, 20, 30, 40, 50, 25 };
-    BSItem data;
     BSIter iter;
+    BSItem data;
 
     for (int i = 0; i < 6; i++) {
         data.key = keys[i];
@@ -16,8 +16,8 @@ void bs_test(void)
     }
     bs_print(os);
 
-    if (bs_search(os, 40, &iter)) {
-        printf("key: %d\n", bs_get(iter).key);
+    if (bs_search(os, 40, &iter, &data)) {
+        printf("key: %d\n", data.key);
     }
     printf("after removing 30: ");
     if (bs_delete(os, 30, &data)) {
@@ -29,7 +29,7 @@ void bs_test(void)
 }
 void avl_test(void)
 {
-    AVLOrderedSet *os = avl_create();
+    AVLOrderedSet* os = avl_create();
     int keys[] = { 10, 20, 30, 40, 50, 25 };
 
     for (int i = 0; i < 6; i++) {
@@ -45,7 +45,7 @@ void avl_test(void)
 }
 void rb_test(void)
 {
-    RBOrderedSet *os = rb_create();
+    RBOrderedSet* os = rb_create();
     int keys[] = { 10, 20, 30, 40, 50, 25 };
 
     for (int i = 0; i < 6; i++) {

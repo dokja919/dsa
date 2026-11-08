@@ -4,21 +4,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef enum {
-    SLOT_EMPTY,
-    SLOT_OCCUPIED,
-    SLOT_DELETED
-} LPState;
 typedef struct {
     int key;
-    LPState state;
-} LPSlot;
+} LPItem;
 typedef struct LinearProbingHashTable LPSet;
 
 LPSet* lp_create(void);
 void lp_destroy(LPSet* table);
-bool lp_insert(LPSet* table, int key);
-bool lp_search(LPSet* table, int key, size_t* index, LPSlot* data);
-bool lp_delete(LPSet* table, int key, LPSlot* data);
+bool lp_insert(LPSet* table, LPItem data);
+bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out);
+bool lp_delete_at(LPSet* table, size_t index_out, LPItem* data_out);
+bool lp_delete(LPSet* table, int key, LPItem* data_out);
 
 #endif // !LINEAR_PROBING_HASH_TABLE_H

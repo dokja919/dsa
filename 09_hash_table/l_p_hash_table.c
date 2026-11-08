@@ -7,6 +7,17 @@ enum {
     INITIAL_CAPACITY = 8 // 16
 };
 
+typedef enum {
+    SLOT_EMPTY,
+    SLOT_OCCUPIED,
+    SLOT_DELETED
+} LPState;
+
+typedef struct {
+    LPItem data;
+    LPState state;
+} LPSlot;
+
 struct LinearProbingHashTable {
     LPSlot* slots;
     size_t capacity;
@@ -59,7 +70,7 @@ static bool ensure_capacity(LPSet* table)
         if (table->slots[i].state != SLOT_OCCUPIED) {
             continue;
         }
-        size_t index = lp_hash(new_capacity, table->slots[i].key);
+        size_t index = lp_hash(new_capacity, table->slots[i].data.key);
 
         while (new_slots[index].state == SLOT_OCCUPIED) {
             index = (index + 1) % new_capacity;
@@ -72,88 +83,86 @@ static bool ensure_capacity(LPSet* table)
 
     return true;
 }
-bool lp_insert(LPSet* table, int key)
+bool lp_insert(LPSet* table, LPItem data)
 {
     if (table == NULL) {
         return false;
+    }
+    size_t index;
+    if (lp_search(table, data.key, &index, NULL)) {
+        table->slots[index].data = data;
+        return true;
     }
     if (ensure_capacity(table) == false) {
         return false;
     }
-    size_t start = lp_hash(table->capacity, key);
-    size_t first_deleted = table->capacity;
+    index = lp_hash(table->capacity, data.key);
 
     for (size_t i = 0; i < table->capacity; i++) {
-        size_t index = (start + i) % table->capacity;
-        LPSlot* item = &table->slots[index];
+        LPSlot* slot = &table->slots[index];
 
-        if (item->state == SLOT_OCCUPIED) {
-            if (item->key == key) {
-                return true;
-            }
-        } else if (item->state == SLOT_DELETED) {
-            if (first_deleted == table->capacity) {
-                first_deleted = index;
-            }
-        } else {
-            size_t insert_index = (first_deleted != table->capacity)
-                                      ? first_deleted
-                                      : index;
-            table->slots[insert_index].key = key;
-            table->slots[insert_index].state = SLOT_OCCUPIED;
+        if (slot->state != SLOT_OCCUPIED) {
+            slot->data = data;
+            slot->state = SLOT_OCCUPIED;
             table->size++;
+
             return true;
         }
-    }
-    if (first_deleted != table->capacity) {
-        table->slots[first_deleted].key = key;
-        table->slots[first_deleted].state = SLOT_OCCUPIED;
-        table->size++;
-        return true;
+        index = (index + 1 == table->capacity) ? 0 : index + 1;
     }
     return false;
 }
-bool lp_search(LPSet* table, int key, size_t* index, LPSlot* data)
+bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
 {
     if (table == NULL) {
         return false;
     }
-    size_t start = lp_hash(table->capacity, key);
+    size_t index = lp_hash(table->capacity, key);
 
     for (size_t i = 0; i < table->capacity; i++) {
-        size_t target_index = (start + i) % table->capacity;
-        LPSlot* target = &table->slots[target_index];
+        LPSlot* target = &table->slots[index];
 
         if (target->state == SLOT_EMPTY) {
             return false;
         }
-        if (target->state == SLOT_OCCUPIED && target->key == key) {
-            if (index != NULL) {
-                *index = target_index;
+        if (target->state == SLOT_OCCUPIED && target->data.key == key) {
+            if (index_out != NULL) {
+                *index_out = index;
             }
-            if (data != NULL) {
-                *data = *target;
+            if (data_out != NULL) {
+                *data_out = target->data;
             }
             return true;
         }
+        index = (index + 1 == table->capacity) ? 0 : index + 1;
     }
     return false;
 }
-bool lp_delete(LPSet* table, int key, LPSlot* data)
+bool lp_delete_at(LPSet* table, size_t index, LPItem* data_out)
+{
+    if (table == NULL || index >= table->capacity) {
+        return false;
+    }
+    LPSlot* target = &table->slots[index];
+    if (target->state != SLOT_OCCUPIED) {
+        return false;
+    }
+    if (data_out != NULL) {
+        *data_out = target->data;
+    }
+    target->state = SLOT_DELETED;
+    table->size--;
+
+    return true;
+}
+bool lp_delete(LPSet* table, int key, LPItem* data_out)
 {
     if (table == NULL) {
         return false;
     }
-    LPSlot target;
-    if (lp_search(table, key, NULL, &target) == false) {
+    size_t index;
+    if (lp_search(table, key, &index, NULL) == false) {
         return false;
     }
-    if (data != NULL) {
-        *data = target;
-    }
-    target.state = SLOT_DELETED;
-
-    table->size--;
-
-    return true;
+    return lp_delete_at(table, index, data_out);
 }

@@ -124,7 +124,7 @@ static void transplant(BSOrderedSet* tree, BSNode* old_child, BSNode* new_child)
         new_child->parent = parent;
     }
 }
-bool bs_search(BSOrderedSet* tree, int key, BSIter* iter_out)
+bool bs_search(BSOrderedSet* tree, int key, BSIter* iter_out, BSItem* data_out)
 {
     if (iter_out != NULL) {
         *iter_out = NULL;
@@ -140,6 +140,9 @@ bool bs_search(BSOrderedSet* tree, int key, BSIter* iter_out)
 
             if (iter_out != NULL) {
                 *iter_out = target;
+            }
+            if (data_out != NULL) {
+                *data_out = target->data;
             }
             return true;
         } else if (key < target->data.key) {

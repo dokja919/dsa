@@ -64,14 +64,15 @@ void lp_test(void)
     if (table == NULL) {
         return;
     }
+    int keys[] = { 12, 20, 28, 35 };
+    size_t item_count = sizeof(keys) / sizeof(keys[0]);
     size_t index;
-    LPSlot data;
+    LPItem data;
 
-    lp_insert(table, 12);
-    lp_insert(table, 20);
-    lp_insert(table, 28);
-    lp_insert(table, 35);
-
+    for (size_t i = 0; i < item_count; i++) {
+        data.key = keys[i];
+        lp_insert(table, data);
+    }
     printf("\n=== Search ===\n");
 
     if (lp_search(table, 22, &index, &data)) {
