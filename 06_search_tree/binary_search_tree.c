@@ -207,10 +207,6 @@ bool bs_delete_iter(BSOrderedSet* tree, BSIter target, BSItem* data_out)
     }
     return delete_node(tree, target, data_out);
 }
-BSItem bs_get(BSIter iter)
-{
-    return iter->data;
-}
 static void inorder(BSNode* node)
 {
     if (node == NULL) {
