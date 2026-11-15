@@ -64,11 +64,17 @@ static size_t sc_hash(int key, size_t capacity)
 {
     return (size_t)key % capacity;
 }
-static bool sc_rehash(SCSet* table, size_t new_capacity)
+static bool ensure_capacity(SCSet* table)
 {
-    if (new_capacity == 0 || new_capacity > SIZE_MAX / sizeof(*table->buckets)) {
+    if (table == NULL) {
         return false;
     }
+    size_t threshold = table->capacity - table->capacity / 4;
+    if (table->size < threshold) {
+        return true;
+    }
+    size_t new_capacity = table->capacity * 2;
+
     SCNode** new_buckets = calloc(new_capacity, sizeof(*new_buckets));
     if (new_buckets == NULL) {
         return false;
@@ -114,12 +120,9 @@ bool sc_insert(SCSet* table, SCItem data)
     if (new_node == NULL) {
         return false;
     }
-    size_t grow_threshold = table->capacity - table->capacity / 4;
-    if (table->size >= grow_threshold) {
-        if (sc_rehash(table, table->capacity * 2) == false) {
-            free(new_node);
-            return false;
-        }
+    if (ensure_capacity(table) == false) {
+        free(new_node);
+        return false;
     }
     index = sc_hash(data.key, table->capacity);
 
