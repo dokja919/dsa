@@ -11,7 +11,7 @@ struct ArrayStack {
 
 AStack* a_create(void)
 {
-    AStack* stack = malloc(sizeof(*stack));
+    AStack* stack = calloc(1, sizeof(*stack));
     if (stack == NULL) {
         return NULL;
     }
@@ -21,8 +21,6 @@ AStack* a_create(void)
         free(stack);
         return NULL;
     }
-    stack->size = 0;
-
     return stack;
 }
 void a_destroy(AStack* stack)

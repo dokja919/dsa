@@ -27,7 +27,7 @@ static CDLNode* node_create(CDLItem data)
 }
 CDLList* cdl_create(void)
 {
-    CDLList* list = malloc(sizeof(*list));
+    CDLList* list = calloc(1, sizeof(*list));
     if (list == NULL) {
         return NULL;
     }
@@ -38,7 +38,6 @@ CDLList* cdl_create(void)
     }
     list->sentinel->next = list->sentinel;
     list->sentinel->prev = list->sentinel;
-    list->size = 0;
 
     return list;
 }

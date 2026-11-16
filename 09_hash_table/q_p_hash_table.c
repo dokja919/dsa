@@ -1,32 +1,24 @@
-#include "l_p_hash_table.h"
+#include "q_p_hash_table.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
-/*
- * Simple quadratic probing:
- *     index(i) = (hash(key) + i * i) % capacity
- *
- * The table capacity is always prime, and the number of stored items is kept
- * at or below half the capacity. The LP-prefixed API is kept for compatibility
- * with the existing caller code.
- */
 enum {
-    LP_INITIAL_CAPACITY = 7
+    QP_INITIAL_CAPACITY = 7
 };
 
 typedef enum {
     SLOT_EMPTY,
     SLOT_OCCUPIED,
     SLOT_DELETED
-} LPState;
+} QPState;
 
 typedef struct {
-    LPItem data;
-    LPState state;
-} LPSlot;
+    QPItem data;
+    QPState state;
+} QPSlot;
 
 struct QuadraticProbingHashTable {
-    LPSlot* slots;
+    QPSlot* slots;
     size_t capacity;
     size_t size;
 };
@@ -46,7 +38,6 @@ static bool is_prime(size_t value)
     }
     return true;
 }
-
 static size_t next_prime(size_t value)
 {
     if (value <= 2) {
@@ -63,15 +54,14 @@ static size_t next_prime(size_t value)
     }
     return value;
 }
-
-LPSet* lp_create(void)
+QPSet* qp_create(void)
 {
-    LPSet* table = malloc(sizeof(*table));
+    QPSet* table = malloc(sizeof(*table));
     if (table == NULL) {
         return NULL;
     }
 
-    table->capacity = LP_INITIAL_CAPACITY;
+    table->capacity = QP_INITIAL_CAPACITY;
     table->size = 0;
     table->slots = calloc(table->capacity, sizeof(*table->slots));
     if (table->slots == NULL) {
@@ -80,8 +70,7 @@ LPSet* lp_create(void)
     }
     return table;
 }
-
-void lp_destroy(LPSet* table)
+void qp_destroy(QPSet* table)
 {
     if (table == NULL) {
         return;
@@ -89,45 +78,32 @@ void lp_destroy(LPSet* table)
     free(table->slots);
     free(table);
 }
-
-static size_t lp_hash(size_t capacity, int key)
+static size_t qp_hash(size_t capacity, int key)
 {
     return (size_t)key % capacity;
 }
-
-/* Returns the i-th slot in the quadratic probing sequence. */
-static size_t lp_probe_index(size_t capacity, size_t hash, size_t attempt)
+static size_t qp_probe_index(size_t capacity, size_t hash, size_t i)
 {
-    size_t offset = (attempt * attempt) % capacity;
+    size_t offset = (i * i) % capacity;
 
-    /* Compute (hash + offset) % capacity without overflowing the sum. */
     if (hash >= capacity - offset) {
         return hash - (capacity - offset);
     }
     return hash + offset;
 }
-
-/*
- * For a prime capacity p, i*i (mod p) visits (p + 1) / 2 distinct slots.
- * This is the number of distinct positions we need to inspect.
- */
-static size_t lp_probe_count(size_t capacity)
+static size_t qp_probe_count(size_t capacity)
 {
     return capacity / 2 + 1;
 }
-
-static bool ensure_capacity(LPSet* table)
+static bool ensure_capacity(QPSet* table)
 {
     if (table == NULL) {
         return false;
     }
-
-    /* Keep the load factor at or below 0.5. */
     size_t threshold = table->capacity / 2;
     if (table->size < threshold) {
         return true;
     }
-
     if (table->capacity > (size_t)-1 / 2) {
         return false;
     }
@@ -135,22 +111,20 @@ static bool ensure_capacity(LPSet* table)
     if (new_capacity == 0) {
         return false;
     }
-
-    LPSlot* new_slots = calloc(new_capacity, sizeof(*new_slots));
+    QPSlot* new_slots = calloc(new_capacity, sizeof(*new_slots));
     if (new_slots == NULL) {
         return false;
     }
-
-    size_t probe_count = lp_probe_count(new_capacity);
+    size_t probe_count = qp_probe_count(new_capacity);
     for (size_t i = 0; i < table->capacity; ++i) {
         if (table->slots[i].state != SLOT_OCCUPIED) {
             continue;
         }
 
-        size_t hash = lp_hash(new_capacity, table->slots[i].data.key);
+        size_t hash = qp_hash(new_capacity, table->slots[i].data.key);
         bool placed = false;
         for (size_t attempt = 0; attempt < probe_count; ++attempt) {
-            size_t index = lp_probe_index(new_capacity, hash, attempt);
+            size_t index = qp_probe_index(new_capacity, hash, attempt);
             if (new_slots[index].state != SLOT_OCCUPIED) {
                 new_slots[index] = table->slots[i];
                 placed = true;
@@ -163,36 +137,30 @@ static bool ensure_capacity(LPSet* table)
             return false;
         }
     }
-
     free(table->slots);
     table->slots = new_slots;
     table->capacity = new_capacity;
     return true;
 }
-
-bool lp_insert(LPSet* table, LPItem data)
+bool qp_insert(QPSet* table, QPItem data)
 {
     if (table == NULL) {
         return false;
     }
-
-    /* Update an existing key instead of inserting a duplicate. */
     size_t index;
-    if (lp_search(table, data.key, &index, NULL)) {
+    if (qp_search(table, data.key, &index, NULL)) {
         table->slots[index].data = data;
         return true;
     }
-
     if (!ensure_capacity(table)) {
         return false;
     }
-
-    size_t hash = lp_hash(table->capacity, data.key);
-    size_t probe_count = lp_probe_count(table->capacity);
+    size_t hash = qp_hash(table->capacity, data.key);
+    size_t probe_count = qp_probe_count(table->capacity);
 
     for (size_t attempt = 0; attempt < probe_count; ++attempt) {
-        index = lp_probe_index(table->capacity, hash, attempt);
-        LPSlot* slot = &table->slots[index];
+        index = qp_probe_index(table->capacity, hash, attempt);
+        QPSlot* slot = &table->slots[index];
 
         if (slot->state != SLOT_OCCUPIED) {
             slot->data = data;
@@ -201,22 +169,19 @@ bool lp_insert(LPSet* table, LPItem data)
             return true;
         }
     }
-
     return false;
 }
-
-bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
+bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out)
 {
     if (table == NULL) {
         return false;
     }
+    size_t hash = qp_hash(table->capacity, key);
+    size_t probe_count = qp_probe_count(table->capacity);
 
-    size_t hash = lp_hash(table->capacity, key);
-    size_t probe_count = lp_probe_count(table->capacity);
-
-    for (size_t attempt = 0; attempt < probe_count; ++attempt) {
-        size_t index = lp_probe_index(table->capacity, hash, attempt);
-        LPSlot* target = &table->slots[index];
+    for (size_t i = 0; i < probe_count; ++i) {
+        size_t index = qp_probe_index(table->capacity, hash, i);
+        QPSlot* target = &table->slots[index];
 
         if (target->state == SLOT_EMPTY) {
             return false;
@@ -230,40 +195,34 @@ bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
             }
             return true;
         }
-        /* SLOT_DELETED must not stop the search. */
     }
-
     return false;
 }
-
-bool lp_delete_at(LPSet* table, size_t index, LPItem* data_out)
+bool qp_delete_at(QPSet* table, size_t index, QPItem* data_out)
 {
     if (table == NULL || index >= table->capacity) {
         return false;
     }
-
-    LPSlot* target = &table->slots[index];
+    QPSlot* target = &table->slots[index];
     if (target->state != SLOT_OCCUPIED) {
         return false;
     }
-
     if (data_out != NULL) {
         *data_out = target->data;
     }
     target->state = SLOT_DELETED;
     table->size--;
+
     return true;
 }
-
-bool lp_delete(LPSet* table, int key, LPItem* data_out)
+bool qp_delete(QPSet* table, int key, QPItem* data_out)
 {
     if (table == NULL) {
         return false;
     }
-
     size_t index;
-    if (!lp_search(table, key, &index, NULL)) {
+    if (!qp_search(table, key, &index, NULL)) {
         return false;
     }
-    return lp_delete_at(table, index, data_out);
+    return qp_delete_at(table, index, data_out);
 }

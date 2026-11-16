@@ -108,12 +108,15 @@ bool sc_insert(SCSet* table, SCItem data)
         return false;
     }
     size_t index = sc_hash(data.key, table->capacity);
+    SCNode* current = table->buckets[index];
 
-    for (SCNode* current = table->buckets[index]; current != NULL; current = current->next) {
+    while (current != NULL) {
+
         if (current->data.key == data.key) {
             current->data = data;
             return true;
         }
+        current = current->next;
     }
     SCNode* new_node = node_create(data);
     if (new_node == NULL) {
@@ -143,8 +146,9 @@ bool sc_search(SCSet* table, int key, SCIter* iter_out, SCItem* data_out)
         return false;
     }
     size_t index = sc_hash(key, table->capacity);
+    SCNode* current = table->buckets[index];
 
-    for (SCNode* current = table->buckets[index]; current != NULL; current = current->next) {
+    while (current != NULL) {
 
         if (current->data.key == key) {
 
@@ -156,6 +160,7 @@ bool sc_search(SCSet* table, int key, SCIter* iter_out, SCItem* data_out)
             }
             return true;
         }
+        current = current->next;
     }
     return false;
 }

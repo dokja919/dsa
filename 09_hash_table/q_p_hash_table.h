@@ -6,19 +6,14 @@
 
 typedef struct {
     int key;
-} LPItem;
+} QPItem;
+typedef struct QuadraticProbingHashTable QPSet;
 
-/*
- * The implementation now uses simple quadratic probing.
- * LPSet and lp_* names are retained so existing code keeps compiling.
- */
-typedef struct QuadraticProbingHashTable LPSet;
-
-LPSet* lp_create(void);
-void lp_destroy(LPSet* table);
-bool lp_insert(LPSet* table, LPItem data);
-bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out);
-bool lp_delete_at(LPSet* table, size_t index_out, LPItem* data_out);
-bool lp_delete(LPSet* table, int key, LPItem* data_out);
+QPSet* qp_create(void);
+void qp_destroy(QPSet* table);
+bool qp_insert(QPSet* table, QPItem data);
+bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out);
+bool qp_delete_at(QPSet* table, size_t index_out, QPItem* data_out);
+bool qp_delete(QPSet* table, int key, QPItem* data_out);
 
 #endif /* QUADRATIC_PROBING_HASH_TABLE_H */

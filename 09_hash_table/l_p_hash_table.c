@@ -26,12 +26,11 @@ struct LinearProbingHashTable {
 
 LPSet* lp_create(void)
 {
-    LPSet* table = malloc(sizeof(*table));
+    LPSet* table = calloc(1, sizeof(*table));
     if (table == NULL) {
         return NULL;
     }
     table->capacity = LP_INITIAL_CAPACITY;
-    table->size = 0;
     table->slots = calloc(table->capacity, sizeof(*table->slots));
     if (table->slots == NULL) {
         free(table);
@@ -88,17 +87,18 @@ bool lp_insert(LPSet* table, LPItem data)
     if (table == NULL) {
         return false;
     }
-    size_t index;
-    if (lp_search(table, data.key, &index, NULL)) {
-        table->slots[index].data = data;
+    size_t hash;
+    if (lp_search(table, data.key, &hash, NULL)) {
+        table->slots[hash].data = data;
         return true;
     }
     if (ensure_capacity(table) == false) {
         return false;
     }
-    index = lp_hash(table->capacity, data.key);
+    hash = lp_hash(table->capacity, data.key);
 
     for (size_t i = 0; i < table->capacity; i++) {
+        size_t index = (hash + i) % table->capacity;
         LPSlot* slot = &table->slots[index];
 
         if (slot->state != SLOT_OCCUPIED) {
@@ -108,7 +108,6 @@ bool lp_insert(LPSet* table, LPItem data)
 
             return true;
         }
-        index = (index + 1 == table->capacity) ? 0 : index + 1;
     }
     return false;
 }
@@ -117,9 +116,10 @@ bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
     if (table == NULL) {
         return false;
     }
-    size_t index = lp_hash(table->capacity, key);
+    size_t hash = lp_hash(table->capacity, key);
 
     for (size_t i = 0; i < table->capacity; i++) {
+        size_t index = (hash + i) % table->capacity;
         LPSlot* target = &table->slots[index];
 
         if (target->state == SLOT_EMPTY) {
@@ -127,14 +127,13 @@ bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
         }
         if (target->state == SLOT_OCCUPIED && target->data.key == key) {
             if (index_out != NULL) {
-                *index_out = index;
+                *index_out = hash;
             }
             if (data_out != NULL) {
                 *data_out = target->data;
             }
             return true;
         }
-        index = (index + 1 == table->capacity) ? 0 : index + 1;
     }
     return false;
 }

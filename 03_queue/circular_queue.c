@@ -12,7 +12,7 @@ struct CircularQueue {
 
 CQueue* c_create(void)
 {
-    CQueue* queue = malloc(sizeof(*queue));
+    CQueue* queue = calloc(1, sizeof(*queue));
     if (queue == NULL) {
         return NULL;
     }
@@ -22,9 +22,6 @@ CQueue* c_create(void)
         free(queue);
         return NULL;
     }
-    queue->front = 0;
-    queue->size = 0;
-
     return queue;
 }
 void c_destroy(CQueue* queue)

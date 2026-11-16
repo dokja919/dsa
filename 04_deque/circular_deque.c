@@ -12,7 +12,7 @@ struct CircularDeque {
 
 CDeque* c_create(void)
 {
-    CDeque* deque = malloc(sizeof(*deque));
+    CDeque* deque = calloc(1, sizeof(*deque));
     if (deque == NULL) {
         return NULL;
     }
@@ -22,9 +22,6 @@ CDeque* c_create(void)
         free(deque);
         return NULL;
     }
-    deque->front = 0;
-    deque->size = 0;
-
     return deque;
 }
 void c_destroy(CDeque* deque)
