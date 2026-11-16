@@ -65,16 +65,16 @@ static bool ensure_capacity(LPSet* table)
     if (new_slots == NULL) {
         return false;
     }
-    for (size_t i = 0; i < table->capacity; i++) {
-        if (table->slots[i].state != SLOT_OCCUPIED) {
+    for (size_t index = 0; index < table->capacity; index++) {
+        if (table->slots[index].state != SLOT_OCCUPIED) {
             continue;
         }
-        size_t index = lp_hash(new_capacity, table->slots[i].data.key);
+        size_t new_index = lp_hash(new_capacity, table->slots[index].data.key);
 
-        while (new_slots[index].state == SLOT_OCCUPIED) {
-            index = (index + 1) % new_capacity;
+        while (new_slots[new_index].state == SLOT_OCCUPIED) {
+            new_index = (new_index + 1) % new_capacity;
         }
-        new_slots[index] = table->slots[i];
+        new_slots[new_index] = table->slots[index];
     }
     free(table->slots);
     table->slots = new_slots;
@@ -87,18 +87,18 @@ bool lp_insert(LPSet* table, LPItem data)
     if (table == NULL) {
         return false;
     }
-    size_t hash;
-    if (lp_search(table, data.key, &hash, NULL)) {
-        table->slots[hash].data = data;
+    size_t index;
+    if (lp_search(table, data.key, &index, NULL)) {
+        table->slots[index].data = data;
         return true;
     }
     if (ensure_capacity(table) == false) {
         return false;
     }
-    hash = lp_hash(table->capacity, data.key);
+    size_t hash = lp_hash(table->capacity, data.key);
 
     for (size_t i = 0; i < table->capacity; i++) {
-        size_t index = (hash + i) % table->capacity;
+        index = (hash + i) % table->capacity;
         LPSlot* slot = &table->slots[index];
 
         if (slot->state != SLOT_OCCUPIED) {
@@ -127,7 +127,7 @@ bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
         }
         if (target->state == SLOT_OCCUPIED && target->data.key == key) {
             if (index_out != NULL) {
-                *index_out = hash;
+                *index_out = index;
             }
             if (data_out != NULL) {
                 *data_out = target->data;

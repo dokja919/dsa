@@ -23,6 +23,34 @@ struct QuadraticProbingHashTable {
     size_t size;
 };
 
+QPSet* qp_create(void)
+{
+    QPSet* table = malloc(sizeof(*table));
+    if (table == NULL) {
+        return NULL;
+    }
+
+    table->capacity = QP_INITIAL_CAPACITY;
+    table->size = 0;
+    table->slots = calloc(table->capacity, sizeof(*table->slots));
+    if (table->slots == NULL) {
+        free(table);
+        return NULL;
+    }
+    return table;
+}
+void qp_destroy(QPSet* table)
+{
+    if (table == NULL) {
+        return;
+    }
+    free(table->slots);
+    free(table);
+}
+static size_t qp_hash(size_t capacity, int key)
+{
+    return (size_t)key % capacity;
+}
 static bool is_prime(size_t value)
 {
     if (value < 2) {
@@ -54,42 +82,9 @@ static size_t next_prime(size_t value)
     }
     return value;
 }
-QPSet* qp_create(void)
-{
-    QPSet* table = malloc(sizeof(*table));
-    if (table == NULL) {
-        return NULL;
-    }
-
-    table->capacity = QP_INITIAL_CAPACITY;
-    table->size = 0;
-    table->slots = calloc(table->capacity, sizeof(*table->slots));
-    if (table->slots == NULL) {
-        free(table);
-        return NULL;
-    }
-    return table;
-}
-void qp_destroy(QPSet* table)
-{
-    if (table == NULL) {
-        return;
-    }
-    free(table->slots);
-    free(table);
-}
-static size_t qp_hash(size_t capacity, int key)
-{
-    return (size_t)key % capacity;
-}
 static size_t qp_probe_index(size_t capacity, size_t hash, size_t i)
 {
-    size_t offset = (i * i) % capacity;
-
-    if (hash >= capacity - offset) {
-        return hash - (capacity - offset);
-    }
-    return hash + offset;
+    return (hash + i * i) % capacity;
 }
 static size_t qp_probe_count(size_t capacity)
 {
@@ -104,9 +99,6 @@ static bool ensure_capacity(QPSet* table)
     if (table->size < threshold) {
         return true;
     }
-    if (table->capacity > (size_t)-1 / 2) {
-        return false;
-    }
     size_t new_capacity = next_prime(table->capacity * 2);
     if (new_capacity == 0) {
         return false;
@@ -116,22 +108,23 @@ static bool ensure_capacity(QPSet* table)
         return false;
     }
     size_t probe_count = qp_probe_count(new_capacity);
-    for (size_t i = 0; i < table->capacity; ++i) {
+
+    for (size_t i = 0; i < table->capacity; i++) {
         if (table->slots[i].state != SLOT_OCCUPIED) {
             continue;
         }
-
         size_t hash = qp_hash(new_capacity, table->slots[i].data.key);
+
         bool placed = false;
         for (size_t attempt = 0; attempt < probe_count; ++attempt) {
-            size_t index = qp_probe_index(new_capacity, hash, attempt);
+            size_t index = (hash + i * i) % new_capacity;
+
             if (new_slots[index].state != SLOT_OCCUPIED) {
                 new_slots[index] = table->slots[i];
                 placed = true;
                 break;
             }
         }
-
         if (!placed) {
             free(new_slots);
             return false;
@@ -140,6 +133,7 @@ static bool ensure_capacity(QPSet* table)
     free(table->slots);
     table->slots = new_slots;
     table->capacity = new_capacity;
+
     return true;
 }
 bool qp_insert(QPSet* table, QPItem data)
@@ -158,14 +152,15 @@ bool qp_insert(QPSet* table, QPItem data)
     size_t hash = qp_hash(table->capacity, data.key);
     size_t probe_count = qp_probe_count(table->capacity);
 
-    for (size_t attempt = 0; attempt < probe_count; ++attempt) {
-        index = qp_probe_index(table->capacity, hash, attempt);
+    for (size_t i = 0; i < probe_count; ++i) {
+        index = (hash + i * i) % table->capacity;
         QPSlot* slot = &table->slots[index];
 
         if (slot->state != SLOT_OCCUPIED) {
             slot->data = data;
             slot->state = SLOT_OCCUPIED;
             table->size++;
+
             return true;
         }
     }
@@ -180,7 +175,7 @@ bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out)
     size_t probe_count = qp_probe_count(table->capacity);
 
     for (size_t i = 0; i < probe_count; ++i) {
-        size_t index = qp_probe_index(table->capacity, hash, i);
+        size_t index = (hash + i * i) % table->capacity;
         QPSlot* target = &table->slots[index];
 
         if (target->state == SLOT_EMPTY) {
