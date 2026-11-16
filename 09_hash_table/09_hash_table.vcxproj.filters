@@ -24,6 +24,9 @@
     <ClCompile Include="l_p_hash_table.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="d_h_hash_table.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="s_c_hash_table.h">

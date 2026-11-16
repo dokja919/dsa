@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 enum {
-    INITIAL_CAPACITY = 8 // 16
+    LP_INITIAL_CAPACITY = 8 // 16
 };
 
 typedef enum {
@@ -30,7 +30,7 @@ LPSet* lp_create(void)
     if (table == NULL) {
         return NULL;
     }
-    table->capacity = INITIAL_CAPACITY;
+    table->capacity = LP_INITIAL_CAPACITY;
     table->size = 0;
     table->slots = calloc(table->capacity, sizeof(*table->slots));
     if (table->slots == NULL) {

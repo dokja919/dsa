@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 enum {
-    INITIAL_CAPACITY = 16
+    SC_INITIAL_CAPACITY = 16
 };
 
 typedef struct SCNode {
@@ -22,12 +22,12 @@ SCSet* sc_create(void)
     if (table == NULL) {
         return NULL;
     }
-    table->buckets = calloc(INITIAL_CAPACITY, sizeof(*table->buckets));
+    table->buckets = calloc(SC_INITIAL_CAPACITY, sizeof(*table->buckets));
     if (table->buckets == NULL) {
         free(table);
         return NULL;
     }
-    table->capacity = INITIAL_CAPACITY;
+    table->capacity = SC_INITIAL_CAPACITY;
 
     return table;
 }
@@ -92,7 +92,6 @@ static bool ensure_capacity(SCSet* table)
             if (new_buckets[index] != NULL) {
                 new_buckets[index]->prev = current;
             }
-
             new_buckets[index] = current;
             current = next;
         }
