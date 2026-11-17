@@ -66,6 +66,7 @@ static bool ensure_capacity(LPSet* table)
         return false;
     }
     for (size_t index = 0; index < table->capacity; index++) {
+
         if (table->slots[index].state != SLOT_OCCUPIED) {
             continue;
         }

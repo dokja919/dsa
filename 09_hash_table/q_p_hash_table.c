@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 enum {
-    QP_INITIAL_CAPACITY = 7
+    QP_INITIAL_CAPACITY = 11
 };
 
 typedef enum {
@@ -25,13 +25,11 @@ struct QuadraticProbingHashTable {
 
 QPSet* qp_create(void)
 {
-    QPSet* table = malloc(sizeof(*table));
+    QPSet* table = calloc(1, sizeof(*table));
     if (table == NULL) {
         return NULL;
     }
-
     table->capacity = QP_INITIAL_CAPACITY;
-    table->size = 0;
     table->slots = calloc(table->capacity, sizeof(*table->slots));
     if (table->slots == NULL) {
         free(table);
@@ -59,7 +57,7 @@ static bool is_prime(size_t value)
     if (value % 2 == 0) {
         return value == 2;
     }
-    for (size_t divisor = 3; divisor <= value / divisor; divisor += 2) {
+    for (size_t divisor = 3; divisor * divisor <= value; divisor += 2) {
         if (value % divisor == 0) {
             return false;
         }
@@ -75,20 +73,9 @@ static size_t next_prime(size_t value)
         ++value;
     }
     while (!is_prime(value)) {
-        if (value > (size_t)-1 - 2) {
-            return 0;
-        }
         value += 2;
     }
     return value;
-}
-static size_t qp_probe_index(size_t capacity, size_t hash, size_t i)
-{
-    return (hash + i * i) % capacity;
-}
-static size_t qp_probe_count(size_t capacity)
-{
-    return capacity / 2 + 1;
 }
 static bool ensure_capacity(QPSet* table)
 {
@@ -107,25 +94,26 @@ static bool ensure_capacity(QPSet* table)
     if (new_slots == NULL) {
         return false;
     }
-    size_t probe_count = qp_probe_count(new_capacity);
+    size_t n = new_capacity / 2 + 1;
 
-    for (size_t i = 0; i < table->capacity; i++) {
-        if (table->slots[i].state != SLOT_OCCUPIED) {
+    for (size_t index = 0; index < table->capacity; index++) {
+
+        if (table->slots[index].state != SLOT_OCCUPIED) {
             continue;
         }
-        size_t hash = qp_hash(new_capacity, table->slots[i].data.key);
+        size_t hash = qp_hash(new_capacity, table->slots[index].data.key);
+        bool inserted = false;
 
-        bool placed = false;
-        for (size_t attempt = 0; attempt < probe_count; ++attempt) {
-            size_t index = (hash + i * i) % new_capacity;
+        for (size_t i = 0; i < n; ++i) {
+            size_t new_index = (hash + i * i) % new_capacity;
 
-            if (new_slots[index].state != SLOT_OCCUPIED) {
-                new_slots[index] = table->slots[i];
-                placed = true;
+            if (new_slots[new_index].state != SLOT_OCCUPIED) {
+                new_slots[new_index] = table->slots[index];
+                inserted = true;
                 break;
             }
         }
-        if (!placed) {
+        if (!inserted) {
             free(new_slots);
             return false;
         }
@@ -150,9 +138,9 @@ bool qp_insert(QPSet* table, QPItem data)
         return false;
     }
     size_t hash = qp_hash(table->capacity, data.key);
-    size_t probe_count = qp_probe_count(table->capacity);
+    size_t n = table->capacity / 2 + 1;
 
-    for (size_t i = 0; i < probe_count; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         index = (hash + i * i) % table->capacity;
         QPSlot* slot = &table->slots[index];
 
@@ -172,9 +160,9 @@ bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out)
         return false;
     }
     size_t hash = qp_hash(table->capacity, key);
-    size_t probe_count = qp_probe_count(table->capacity);
+    size_t n = table->capacity / 2 + 1;
 
-    for (size_t i = 0; i < probe_count; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         size_t index = (hash + i * i) % table->capacity;
         QPSlot* target = &table->slots[index];
 
