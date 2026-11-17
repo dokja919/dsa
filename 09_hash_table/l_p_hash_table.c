@@ -46,9 +46,38 @@ void lp_destroy(LPSet* table)
     free(table->slots);
     free(table);
 }
-static size_t lp_hash(size_t capacity, int key)
+static size_t hash(int key, size_t capacity)
 {
-    return (size_t)key % capacity;
+    int result = key % capacity;
+
+    return result < 0 ? result + capacity : result;
+}
+bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
+{
+    if (table == NULL) {
+        return false;
+    }
+    size_t start = hash(key, table->capacity);
+
+    for (size_t i = 0; i < table->capacity; i++) {
+        size_t index = (start + i) % table->capacity;
+        LPSlot* target = &table->slots[index];
+
+        if (target->state == SLOT_EMPTY) {
+            return false;
+        }
+        if (target->state == SLOT_OCCUPIED && target->data.key == key) {
+
+            if (index_out != NULL) {
+                *index_out = index;
+            }
+            if (data_out != NULL) {
+                *data_out = target->data;
+            }
+            return true;
+        }
+    }
+    return false;
 }
 static bool ensure_capacity(LPSet* table)
 {
@@ -70,7 +99,7 @@ static bool ensure_capacity(LPSet* table)
         if (table->slots[index].state != SLOT_OCCUPIED) {
             continue;
         }
-        size_t new_index = lp_hash(new_capacity, table->slots[index].data.key);
+        size_t new_index = hash(table->slots[index].data.key, new_capacity);
 
         while (new_slots[new_index].state == SLOT_OCCUPIED) {
             new_index = (new_index + 1) % new_capacity;
@@ -96,10 +125,10 @@ bool lp_insert(LPSet* table, LPItem data)
     if (ensure_capacity(table) == false) {
         return false;
     }
-    size_t hash = lp_hash(table->capacity, data.key);
+    size_t start = hash(data.key, table->capacity);
 
     for (size_t i = 0; i < table->capacity; i++) {
-        index = (hash + i) % table->capacity;
+        index = (start + i) % table->capacity;
         LPSlot* slot = &table->slots[index];
 
         if (slot->state != SLOT_OCCUPIED) {
@@ -107,32 +136,6 @@ bool lp_insert(LPSet* table, LPItem data)
             slot->state = SLOT_OCCUPIED;
             table->size++;
 
-            return true;
-        }
-    }
-    return false;
-}
-bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
-{
-    if (table == NULL) {
-        return false;
-    }
-    size_t hash = lp_hash(table->capacity, key);
-
-    for (size_t i = 0; i < table->capacity; i++) {
-        size_t index = (hash + i) % table->capacity;
-        LPSlot* target = &table->slots[index];
-
-        if (target->state == SLOT_EMPTY) {
-            return false;
-        }
-        if (target->state == SLOT_OCCUPIED && target->data.key == key) {
-            if (index_out != NULL) {
-                *index_out = index;
-            }
-            if (data_out != NULL) {
-                *data_out = target->data;
-            }
             return true;
         }
     }

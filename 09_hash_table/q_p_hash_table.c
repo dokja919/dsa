@@ -45,20 +45,16 @@ void qp_destroy(QPSet* table)
     free(table->slots);
     free(table);
 }
-static size_t qp_hash(size_t capacity, int key)
+static bool is_prime(size_t number)
 {
-    return (size_t)key % capacity;
-}
-static bool is_prime(size_t value)
-{
-    if (value < 2) {
+    if (number < 2) {
         return false;
     }
-    if (value % 2 == 0) {
-        return value == 2;
+    if (number % 2 == 0) {
+        return number == 2;
     }
-    for (size_t divisor = 3; divisor * divisor <= value; divisor += 2) {
-        if (value % divisor == 0) {
+    for (size_t divisor = 3; divisor * divisor <= number; divisor += 2) {
+        if (number % divisor == 0) {
             return false;
         }
     }
@@ -76,6 +72,39 @@ static size_t next_prime(size_t value)
         value += 2;
     }
     return value;
+}
+static size_t hash(int key, size_t capacity)
+{
+    int result = key % capacity;
+
+    return result < 0 ? result + capacity : result;
+}
+bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out)
+{
+    if (table == NULL) {
+        return false;
+    }
+    size_t start = hash(key, table->capacity);
+    size_t n = table->capacity / 2 + 1;
+
+    for (size_t i = 0; i < n; ++i) {
+        size_t index = (start + i * i) % table->capacity;
+        QPSlot* target = &table->slots[index];
+
+        if (target->state == SLOT_EMPTY) {
+            return false;
+        }
+        if (target->state == SLOT_OCCUPIED && target->data.key == key) {
+            if (index_out != NULL) {
+                *index_out = index;
+            }
+            if (data_out != NULL) {
+                *data_out = target->data;
+            }
+            return true;
+        }
+    }
+    return false;
 }
 static bool ensure_capacity(QPSet* table)
 {
@@ -101,11 +130,11 @@ static bool ensure_capacity(QPSet* table)
         if (table->slots[index].state != SLOT_OCCUPIED) {
             continue;
         }
-        size_t hash = qp_hash(new_capacity, table->slots[index].data.key);
+        size_t start = hash(table->slots[index].data.key, new_capacity);
         bool inserted = false;
 
         for (size_t i = 0; i < n; ++i) {
-            size_t new_index = (hash + i * i) % new_capacity;
+            size_t new_index = (start + i * i) % new_capacity;
 
             if (new_slots[new_index].state != SLOT_OCCUPIED) {
                 new_slots[new_index] = table->slots[index];
@@ -137,11 +166,11 @@ bool qp_insert(QPSet* table, QPItem data)
     if (!ensure_capacity(table)) {
         return false;
     }
-    size_t hash = qp_hash(table->capacity, data.key);
+    size_t start = hash(data.key, table->capacity);
     size_t n = table->capacity / 2 + 1;
 
     for (size_t i = 0; i < n; ++i) {
-        index = (hash + i * i) % table->capacity;
+        index = (start + i * i) % table->capacity;
         QPSlot* slot = &table->slots[index];
 
         if (slot->state != SLOT_OCCUPIED) {
@@ -149,33 +178,6 @@ bool qp_insert(QPSet* table, QPItem data)
             slot->state = SLOT_OCCUPIED;
             table->size++;
 
-            return true;
-        }
-    }
-    return false;
-}
-bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out)
-{
-    if (table == NULL) {
-        return false;
-    }
-    size_t hash = qp_hash(table->capacity, key);
-    size_t n = table->capacity / 2 + 1;
-
-    for (size_t i = 0; i < n; ++i) {
-        size_t index = (hash + i * i) % table->capacity;
-        QPSlot* target = &table->slots[index];
-
-        if (target->state == SLOT_EMPTY) {
-            return false;
-        }
-        if (target->state == SLOT_OCCUPIED && target->data.key == key) {
-            if (index_out != NULL) {
-                *index_out = index;
-            }
-            if (data_out != NULL) {
-                *data_out = target->data;
-            }
             return true;
         }
     }
