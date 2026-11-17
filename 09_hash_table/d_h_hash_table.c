@@ -79,10 +79,6 @@ static size_t hash2(int key, size_t capacity)
 {
     return 1 + normalize_key(key, capacity - 1);
 }
-static size_t probe(int key, size_t i, size_t capacity)
-{
-    return (hash1(key, capacity) + i * hash2(key, capacity)) % capacity;
-}
 bool dh_search(DHSet* table, int key, size_t* index_out, DHItem* data_out)
 {
     if (table == NULL) {
@@ -120,7 +116,7 @@ bool dh_insert(DHSet* table, DHItem data)
     size_t index;
     if (dh_search(table, data.key, &index, NULL)) {
         table->slots[index].data = data;
-        return false;
+        return true;
     }
     size_t start = hash1(data.key, table->capacity);
     size_t step = hash2(data.key, table->capacity);
