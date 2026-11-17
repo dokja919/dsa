@@ -12,18 +12,16 @@ struct BinaryHeap {
 
 BPriorityQueue* b_create(void)
 {
-    BPriorityQueue* heap = malloc(sizeof(*heap));
+    BPriorityQueue* heap = calloc(1, sizeof(*heap));
     if (heap == NULL) {
         return NULL;
     }
     heap->capacity = INITIAL_CAPACITY;
-    heap->items = malloc(sizeof(BItem) * heap->capacity);
+    heap->items = calloc(heap->capacity, sizeof(BItem));
     if (heap->items == NULL) {
         free(heap);
         return NULL;
     }
-    heap->size = 0;
-
     return heap;
 }
 void b_destroy(BPriorityQueue* heap)
@@ -93,19 +91,19 @@ static void heapify(BPriorityQueue* heap, size_t parent)
         return;
     }
     size_t right = left + 1;
-    size_t child = left;
+    size_t higher = left;
 
     if (right < heap->size && heap->items[right].priority > heap->items[left].priority) {
-        child = right;
+        higher = right;
     }
-    if (heap->items[parent].priority >= heap->items[child].priority) {
+    if (heap->items[parent].priority >= heap->items[higher].priority) {
         return;
     }
     BItem temp = heap->items[parent];
-    heap->items[parent] = heap->items[child];
-    heap->items[child] = temp;
+    heap->items[parent] = heap->items[higher];
+    heap->items[higher] = temp;
 
-    heapify(heap, child);
+    heapify(heap, higher);
 }
 bool b_pop(BPriorityQueue* heap, BItem* data_out)
 {

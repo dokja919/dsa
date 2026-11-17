@@ -5,7 +5,7 @@
 void c_test(void)
 {
     CItem data;
-    CQueue *queue = c_create();
+    CQueue* queue = c_create();
     if (queue == NULL) {
         return;
     }
@@ -20,11 +20,13 @@ void c_test(void)
             printf("Dequeue: %d\n", data);
         }
     }
+    printf("Size: %zu\n", c_size(queue));
+
     c_destroy(queue);
 }
 void l_test(void)
 {
-    LQueue *queue = l_create();
+    LQueue* queue = l_create();
 
     for (int i = 0; i < 16; i++) {
         l_enqueue(queue, i);

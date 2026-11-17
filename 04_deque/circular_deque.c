@@ -17,7 +17,7 @@ CDeque* c_create(void)
         return NULL;
     }
     deque->capacity = INITIAL_CAPACITY;
-    deque->items = malloc(sizeof(*deque->items) * deque->capacity);
+    deque->items = calloc(deque->capacity, sizeof(*deque->items));
     if (deque->items == NULL) {
         free(deque);
         return NULL;

@@ -16,7 +16,7 @@ AStack* a_create(void)
         return NULL;
     }
     stack->capacity = INITIAL_CAPACITY;
-    stack->items = malloc(sizeof(*stack->items) * stack->capacity);
+    stack->items = calloc(stack->capacity, sizeof(*stack->items));
     if (stack->items == NULL) {
         free(stack);
         return NULL;

@@ -5,31 +5,29 @@
 
 void a_test(void)
 {
-    AItem value;
-    AStack *stack = a_create();
+    AItem data;
+    AStack* stack = a_create();
     if (stack == NULL) {
         return;
     }
-    a_push(stack, 3);
-    a_push(stack, 37);
-    a_push(stack, 11);
-    a_push(stack, 12);
-    if (a_peek(stack, &value)) {
-        printf("size: %zu, Top: %d\n", a_size(stack), value);
+    for (int i = 1; i <= 10; i++) {
+        a_push(stack, i * 10);
     }
-
+    if (a_peek(stack, &data)) {
+        printf("Size : %zu, Top: %d\n", a_size(stack), data);
+    }
     while (a_is_empty(stack) == false) {
-        if (a_pop(stack, &value)) {
-            printf("Popped: %d\n", value);
+        if (a_pop(stack, &data)) {
+            printf("Popped: %d\n", data);
         }
     }
-    printf("stack Is Empty.\n");
+    printf("Size: %zu\n", a_size(stack));
 
     a_destroy(stack);
 }
 void l_test(void)
 {
-    LStack *stack = l_create();
+    LStack* stack = l_create();
 
     l_push(stack, 10);
     l_push(stack, 20);

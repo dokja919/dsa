@@ -7,7 +7,7 @@
 
 void a_test(void)
 {
-    AList *list = a_create();
+    AList* list = a_create();
     if (list == NULL) {
         return;
     }
@@ -30,7 +30,7 @@ void a_test(void)
 }
 void sl_test(void)
 {
-    SLList *list = sl_create();
+    SLList* list = sl_create();
     if (list == NULL) {
         return;
     }
@@ -52,7 +52,7 @@ void sl_test(void)
 }
 void cl_test(void)
 {
-    CLList *list = cl_create();
+    CLList* list = cl_create();
     if (list == NULL) {
         return;
     }
@@ -74,7 +74,7 @@ void cl_test(void)
 }
 void dl_test(void)
 {
-    DLList *list = dl_create();
+    DLList* list = dl_create();
     if (list == NULL) {
         return;
     }
@@ -96,11 +96,13 @@ void dl_test(void)
 }
 void cdl_test(void)
 {
-    CDLItem data;
-    CDLList *list = cdl_create();
+    CDLList* list = cdl_create();
     if (list == NULL) {
         return;
     }
+    CDLItem data;
+    CDLIter iter = NULL;
+
     for (int i = 1; i <= 5; i++) {
         cdl_insert_at(list, cdl_size(list), i * 10);
     }
@@ -115,9 +117,24 @@ void cdl_test(void)
     if (cdl_delete_at(list, 3, &data)) {
         printf("Delete [3]: %d\n", data);
     }
-
     cdl_print(list);
     printf("Size: %zu\n", cdl_size(list));
+
+    if (cdl_search(list, 20, &iter, &data)) {
+        printf("Found: %d\n", data);
+        cdl_insert_before(list, iter, 15);
+        cdl_set(list, iter, 21);
+    }
+    list_print(list);
+
+    if (cdl_search(list, 21, &iter, NULL)) {
+
+        if (list_delete(list, iter, &data)) {
+            printf("Deleted: %d\n", data);
+            iter = NULL;
+        }
+    }
+    list_print(list);
 
     cdl_destroy(list);
 }

@@ -5,27 +5,30 @@
 
 void bs_test(void)
 {
-    BSOrderedSet* os = bs_create();
+    BSOrderedSet* set = bs_create();
+    if (set == NULL) {
+        return;
+    }
     int keys[] = { 10, 20, 30, 40, 50, 25 };
     BSIter iter;
     BSItem data;
 
-    for (int i = 0; i < 6; i++) {
+    for (size_t i = 0; i < 6; i++) {
         data.key = keys[i];
-        bs_insert(os, data);
+        bs_insert(set, data);
     }
-    bs_print(os);
+    bs_print(set);
 
-    if (bs_search(os, 40, &iter, &data)) {
+    if (bs_search(set, 40, &iter, &data)) {
         printf("key: %d\n", data.key);
     }
     printf("after removing 30: ");
-    if (bs_delete(os, 30, &data)) {
+    if (bs_delete(set, 30, &data)) {
         printf("data: %d\n", data.key);
     }
-    bs_print(os);
+    bs_print(set);
 
-    bs_destroy(os);
+    bs_destroy(set);
 }
 void avl_test(void)
 {

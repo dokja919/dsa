@@ -8,7 +8,6 @@ void sc_test(void)
     if (table == NULL) {
         return;
     }
-
     int keys[] = { 10, 26, 42, 58, 11, 27, 43, 59, 12, 28 };
     size_t item_count = sizeof(keys) / sizeof(keys[0]);
     SCItem data;
@@ -25,7 +24,6 @@ void sc_test(void)
             return;
         }
     }
-
     printf("\n--- Search ---\n");
     for (size_t i = 0; i < item_count; ++i) {
         SCIter iter = NULL;

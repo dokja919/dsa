@@ -16,14 +16,17 @@ void b_test(void)
         data.priority = priorities[i];
         b_push(pq, data);
     }
-    printf("deleting:\n");
+    printf("Heap size: %zu\n", b_size(pq));
 
-    while (b_size(pq) > 0) {
-        if (b_pop(pq, &data)) {
-            printf("%d\n", data.priority);
-        }
+    if (heap_peek(pq, &data)) {
+        printf("Top priority: %d\n", data.priority);
     }
 
+    while (b_is_empty(pq) == false) {
+        if (b_pop(pq, &data)) {
+            printf("Pop: %d\n", data.priority);
+        }
+    }
     b_destroy(pq);
 }
 int main(void)

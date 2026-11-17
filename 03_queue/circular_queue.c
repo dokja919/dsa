@@ -17,7 +17,7 @@ CQueue* c_create(void)
         return NULL;
     }
     queue->capacity = INITIAL_CAPACITY;
-    queue->items = malloc(sizeof(*queue->items) * queue->capacity);
+    queue->items = calloc(queue->capacity, sizeof(*queue->items));
     if (queue->items == NULL) {
         free(queue);
         return NULL;

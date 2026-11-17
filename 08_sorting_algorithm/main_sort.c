@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void swap(int *a, int *b)
+void swap(int* a, int* b)
 {
     int temp = *a;
     *a = *b;
@@ -12,7 +12,7 @@ void swap(int *a, int *b)
 // Bubble sort
 void bubble_sort(int array[], size_t n)
 {
-    if (array == NULL || n < 2) {
+    if (array == NULL || n <= 1) {
         return;
     }
     for (size_t pass = 0; pass < n - 1; pass++) {
@@ -32,7 +32,7 @@ void bubble_sort(int array[], size_t n)
 // Selection sort
 void selection_sort(int array[], size_t n)
 {
-    if (array == NULL || n < 2) {
+    if (array == NULL || n <= 1) {
         return;
     }
     for (size_t i = 0; i < n - 1; i++) {
@@ -51,7 +51,7 @@ void selection_sort(int array[], size_t n)
 // Insertion sort
 void insertion_sort(int array[], size_t n)
 {
-    if (array == NULL || n < 2) {
+    if (array == NULL || n <= 1) {
         return;
     }
     for (size_t i = 1; i < n; i++) {
@@ -70,15 +70,15 @@ void insertion_sort(int array[], size_t n)
 void merge(int array[], size_t low, size_t mid, size_t high)
 {
     size_t size = high - low;
-    int *buffer = malloc(size * sizeof(*buffer));
+
+    int* buffer = malloc(size * sizeof(*buffer));
     if (buffer == NULL) {
         return;
     }
-
+    size_t index = 0;
     size_t i = low;
     size_t j = mid;
 
-    size_t index = 0;
     while (i < mid && j < high) {
         if (array[i] <= array[j]) {
             buffer[index++] = array[i++];
@@ -92,7 +92,6 @@ void merge(int array[], size_t low, size_t mid, size_t high)
     while (j < high) {
         buffer[index++] = array[j++];
     }
-
     for (size_t i = 0; i < size; i++) {
         array[low + i] = buffer[i];
     }
@@ -100,14 +99,14 @@ void merge(int array[], size_t low, size_t mid, size_t high)
 }
 void merge_sort(int array[], size_t low, size_t high)
 {
-    if (array == NULL || high - low < 2) {
+    if (array == NULL || high - low <= 1) {
         return;
     }
-    size_t middle = (low + high) / 2;
+    size_t mid = (low + high) / 2;
 
-    merge_sort(array, low, middle);
-    merge_sort(array, middle, high);
-    merge(array, low, middle, high);
+    merge_sort(array, low, mid);
+    merge_sort(array, mid, high);
+    merge(array, low, mid, high);
 }
 // Quick sort
 size_t partition(int array[], size_t low, size_t high)
@@ -137,7 +136,7 @@ size_t partition(int array[], size_t low, size_t high)
 }
 void quick_sort(int array[], size_t low, size_t high)
 {
-    if (array == NULL || high - low < 2) {
+    if (array == NULL || high - low <= 1) {
         return;
     }
     size_t pivot_index = partition(array, low, high);
@@ -146,41 +145,41 @@ void quick_sort(int array[], size_t low, size_t high)
     quick_sort(array, pivot_index + 1, high);
 }
 // Heap sort
-void heapify(int array[], size_t n, size_t root)
+void heapify(int array[], size_t n, size_t parent)
 {
-    size_t left_child = 2 * root + 1;
-    if (left_child >= n) {
+    size_t left = 2 * parent + 1;
+    if (left >= n) {
         return;
     }
+    size_t right = left + 1;
+    size_t higher = left;
 
-    size_t right_child = left_child + 1;
-    size_t larger_child = left_child;
-
-    if (right_child < n && array[right_child] > array[left_child]) {
-        larger_child = right_child;
+    if (right < n && array[right] > array[left]) {
+        higher = right;
     }
-
-    if (array[root] >= array[larger_child]) {
+    if (array[parent] >= array[higher]) {
         return;
     }
-    swap(&array[root], &array[larger_child]);
-    heapify(array, n, larger_child);
+    swap(&array[parent], &array[higher]);
+
+    heapify(array, n, higher);
 }
 void heap_sort(int array[], size_t n)
 {
-    if (array == NULL || n < 2) {
+    if (array == NULL || n <= 1) {
         return;
     }
-    for (size_t i = n / 2; i > 0; i--) {
-        heapify(array, n, i - 1);
+    for (size_t i = n / 2; i > 0;) {
+        i--;
+        heapify(array, n, i);
     }
-    for (size_t end = n - 1; end > 0; end--) {
-        swap(&array[0], &array[end]);
-        heapify(array, end, 0);
+    for (size_t rear = n - 1; rear > 0; rear--) {
+        swap(&array[0], &array[rear]);
+        heapify(array, rear, 0);
     }
 }
 // Counting sort
-bool get_nonnegative_max(int array[], size_t n, size_t *max_value)
+bool get_nonnegative_max(int array[], size_t n, size_t* max_value)
 {
     if (array == NULL || n == 0 || max_value == NULL) {
         return false;
@@ -204,7 +203,7 @@ bool get_nonnegative_max(int array[], size_t n, size_t *max_value)
 }
 void counting_sort(int array[], size_t n)
 {
-    if (array == NULL || n < 2) {
+    if (array == NULL || n <= 1) {
         return;
     }
 
@@ -213,8 +212,8 @@ void counting_sort(int array[], size_t n)
         return;
     }
 
-    size_t *counts = calloc(max_value + 1, sizeof(*counts));
-    int *output = malloc(n * sizeof(*output));
+    size_t* counts = calloc(max_value + 1, sizeof(*counts));
+    int* output = malloc(n * sizeof(*output));
     if (counts == NULL || output == NULL) {
         free(counts);
         free(output);
@@ -247,9 +246,9 @@ void counting_sort(int array[], size_t n)
 // Radix sort
 void counting_pass(int array[], size_t n, size_t place_value)
 {
-    size_t counts[10] = {0};
+    size_t counts[10] = { 0 };
 
-    int *output = malloc(n * sizeof(*output));
+    int* output = malloc(n * sizeof(*output));
     if (output == NULL) {
         return;
     }
@@ -278,7 +277,7 @@ void counting_pass(int array[], size_t n, size_t place_value)
 }
 void radix_sort(int array[], size_t n)
 {
-    if (array == NULL || n < 2) {
+    if (array == NULL || n <= 1) {
         return;
     }
     size_t max_value;
@@ -292,16 +291,16 @@ void radix_sort(int array[], size_t n)
 }
 // Bucket sort
 typedef struct {
-    int *data;
+    int* data;
     size_t size;
     size_t capacity;
 } Bucket;
-bool bucket_push(Bucket *bucket, int value)
+bool bucket_push(Bucket* bucket, int value)
 {
     if (bucket->size >= bucket->capacity) {
 
         size_t new_capacity = (bucket->capacity == 0) ? 1 : bucket->capacity * 2;
-        int *new_data = realloc(bucket->data, new_capacity * sizeof(*new_data));
+        int* new_data = realloc(bucket->data, new_capacity * sizeof(*new_data));
 
         if (new_data == NULL) {
             return false;
@@ -314,7 +313,7 @@ bool bucket_push(Bucket *bucket, int value)
 }
 void bucket_sort(int array[], size_t n)
 {
-    if (array == NULL || n < 2) {
+    if (array == NULL || n <= 1) {
         return;
     }
     size_t max_value;
@@ -324,7 +323,7 @@ void bucket_sort(int array[], size_t n)
     if (max_value == 0) {
         return;
     }
-    Bucket *buckets = calloc(n, sizeof(*buckets));
+    Bucket* buckets = calloc(n, sizeof(*buckets));
     if (buckets == NULL) {
         return;
     }
@@ -368,7 +367,7 @@ void print_array(int array[], size_t n)
 }
 int main()
 {
-    int values[] = {11, 13, 7, 12, 16, 9, 24, 5, 10, 3};
+    int values[] = { 11, 13, 7, 12, 16, 9, 24, 5, 10, 3 };
     // int values[] = {3, 3};
     size_t n = sizeof(values) / sizeof(*values);
 
