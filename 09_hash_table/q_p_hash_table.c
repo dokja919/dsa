@@ -45,6 +45,43 @@ void qp_destroy(QPSet* table)
     free(table->slots);
     free(table);
 }
+static size_t hash(int key, size_t capacity)
+{
+    int result = key % capacity;
+
+    return result < 0 ? result + capacity : result;
+}
+static size_t probe_count(size_t capacity)
+{
+    return capacity / 2 + 1;
+}
+bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out)
+{
+    if (table == NULL) {
+        return false;
+    }
+    size_t start = hash(key, table->capacity);
+    size_t n = probe_count(table->capacity);
+
+    for (size_t i = 0; i < n; ++i) {
+        size_t index = (start + i * i) % table->capacity;
+        QPSlot* target = &table->slots[index];
+
+        if (target->state == SLOT_EMPTY) {
+            return false;
+        }
+        if (target->state == SLOT_OCCUPIED && target->data.key == key) {
+            if (index_out != NULL) {
+                *index_out = index;
+            }
+            if (data_out != NULL) {
+                *data_out = target->data;
+            }
+            return true;
+        }
+    }
+    return false;
+}
 static bool is_prime(size_t number)
 {
     if (number < 2) {
@@ -73,39 +110,6 @@ static size_t next_prime(size_t value)
     }
     return value;
 }
-static size_t hash(int key, size_t capacity)
-{
-    int result = key % capacity;
-
-    return result < 0 ? result + capacity : result;
-}
-bool qp_search(QPSet* table, int key, size_t* index_out, QPItem* data_out)
-{
-    if (table == NULL) {
-        return false;
-    }
-    size_t start = hash(key, table->capacity);
-    size_t n = table->capacity / 2 + 1;
-
-    for (size_t i = 0; i < n; ++i) {
-        size_t index = (start + i * i) % table->capacity;
-        QPSlot* target = &table->slots[index];
-
-        if (target->state == SLOT_EMPTY) {
-            return false;
-        }
-        if (target->state == SLOT_OCCUPIED && target->data.key == key) {
-            if (index_out != NULL) {
-                *index_out = index;
-            }
-            if (data_out != NULL) {
-                *data_out = target->data;
-            }
-            return true;
-        }
-    }
-    return false;
-}
 static bool ensure_capacity(QPSet* table)
 {
     if (table == NULL) {
@@ -123,7 +127,7 @@ static bool ensure_capacity(QPSet* table)
     if (new_slots == NULL) {
         return false;
     }
-    size_t n = new_capacity / 2 + 1;
+    size_t n = probe_count(table->capacity);
 
     for (size_t index = 0; index < table->capacity; index++) {
 
@@ -167,7 +171,7 @@ bool qp_insert(QPSet* table, QPItem data)
         return false;
     }
     size_t start = hash(data.key, table->capacity);
-    size_t n = table->capacity / 2 + 1;
+    size_t n = probe_count(table->capacity);
 
     for (size_t i = 0; i < n; ++i) {
         index = (start + i * i) % table->capacity;

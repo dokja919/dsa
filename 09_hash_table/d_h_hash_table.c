@@ -50,21 +50,6 @@ void dh_destroy(DHSet* table)
     free(table->slots);
     free(table);
 }
-static bool is_prime(size_t number)
-{
-    if (number < 2) {
-        return false;
-    }
-    if (number % 2 == 0) {
-        return number == 2;
-    }
-    for (size_t divisor = 3; divisor * divisor <= number; divisor += 2) {
-        if (number % divisor == 0) {
-            return false;
-        }
-    }
-    return true;
-}
 static size_t normalize_key(int key, size_t capacity)
 {
     int result = key % capacity;
@@ -89,7 +74,6 @@ bool dh_search(DHSet* table, int key, size_t* index_out, DHItem* data_out)
 
     for (size_t i = 0; i < table->capacity; i++) {
         size_t index = (start + i * step) % table->capacity;
-        probe(key, i, table->capacity);
         DHSlot* target = &table->slots[index];
 
         if (target->state == SLOT_EMPTY) {
@@ -107,6 +91,81 @@ bool dh_search(DHSet* table, int key, size_t* index_out, DHItem* data_out)
         }
     }
     return false;
+}
+static bool is_prime(size_t number)
+{
+    if (number < 2) {
+        return false;
+    }
+    if (number % 2 == 0) {
+        return number == 2;
+    }
+    for (size_t divisor = 3; divisor * divisor <= number; divisor += 2) {
+        if (number % divisor == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+static size_t next_prime(size_t value)
+{
+    if (value <= 2) {
+        return 2;
+    }
+    if (value % 2 == 0) {
+        ++value;
+    }
+    while (!is_prime(value)) {
+        value += 2;
+    }
+    return value;
+}
+static bool ensure_capacity(DHSet* table)
+{
+    if (table == NULL) {
+        return false;
+    }
+    size_t threshold = (table->capacity / 10) * 7 + ((table->capacity % 10) * 7) / 10;
+    if (table->size < threshold) {
+        return true;
+    }
+    size_t new_capacity = next_prime(table->capacity * 2);
+    if (new_capacity == 0) {
+        return false;
+    }
+    DHSlot* new_slots = calloc(new_capacity, sizeof(*new_slots));
+    if (new_slots == NULL) {
+        return false;
+    }
+    for (size_t index = 0; index < table->capacity; index++) {
+
+        DHSlot slot = table->slots[index];
+        if (slot.state != SLOT_OCCUPIED) {
+            continue;
+        }
+        size_t start = hash1(slot.data.key, new_capacity);
+        size_t step = hash2(slot.data.key, new_capacity);
+        bool inserted = false;
+
+        for (size_t i = 0; i < new_capacity; ++i) {
+            size_t new_index = (start + i * i) % new_capacity;
+
+            if (new_slots[new_index].state != SLOT_OCCUPIED) {
+                new_slots[new_index] = slot;
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted) {
+            free(new_slots);
+            return false;
+        }
+    }
+    free(table->slots);
+    table->slots = new_slots;
+    table->capacity = new_capacity;
+
+    return true;
 }
 bool dh_insert(DHSet* table, DHItem data)
 {
@@ -135,46 +194,33 @@ bool dh_insert(DHSet* table, DHItem data)
     }
     return false;
 }
-int delete_key(DHSet* ht, int key)
+bool dh_delete_at(DHSet* table, size_t index, DHItem* data_out)
 {
-    int index = dh_search(ht, key);
-
-    if (index == -1) {
+    if (table == NULL || index >= table->capacity) {
         return false;
     }
-
-    ht->slots[index].state = SLOT_DELETED;
-    ht->size--;
+    DHSlot* target = &table->slots[index];
+    if (target->state != SLOT_OCCUPIED) {
+        return false;
+    }
+    if (data_out != NULL) {
+        *data_out = target->data;
+    }
+    target->state = SLOT_DELETED;
+    table->size--;
 
     return true;
 }
-void print_hash_table(DHSet* ht)
+bool dh_delete(DHSet* table, int key, DHItem* data_out)
 {
-    printf("Hash Table\n");
-
-    for (int i = 0; i < ht->capacity; i++) {
-        printf("[%d] ", i);
-
-        if (ht->slots[i].state == SLOT_EMPTY) {
-            printf("EMPTY");
-        } else if (ht->slots[i].state == SLOT_DELETED) {
-            printf("DELETED");
-        } else {
-            printf("%d", ht->slots[i].key);
-        }
-
-        printf("\n");
+    if (table == NULL) {
+        return false;
     }
-
-    printf("Size: %d / %d\n", ht->size, ht->capacity);
-}
-
-void free_hash_table(DHSet* ht)
-{
-    free(ht->slots);
-    ht->slots = NULL;
-    ht->capacity = 0;
-    ht->size = 0;
+    size_t index;
+    if (dh_search(table, key, &index, NULL) == false) {
+        return false;
+    }
+    return dh_delete_at(table, index, data_out);
 }
 
 // int main(void)
