@@ -145,20 +145,14 @@ static bool ensure_capacity(DHSet* table)
         }
         size_t start = hash1(slot.data.key, new_capacity);
         size_t step = hash2(slot.data.key, new_capacity);
-        bool inserted = false;
 
         for (size_t i = 0; i < new_capacity; ++i) {
-            size_t new_index = (start + i * i) % new_capacity;
+            size_t new_index = (start + i * step) % new_capacity;
 
             if (new_slots[new_index].state != SLOT_OCCUPIED) {
                 new_slots[new_index] = slot;
-                inserted = true;
                 break;
             }
-        }
-        if (!inserted) {
-            free(new_slots);
-            return false;
         }
     }
     free(table->slots);
@@ -176,6 +170,9 @@ bool dh_insert(DHSet* table, DHItem data)
     if (dh_search(table, data.key, &index, NULL)) {
         table->slots[index].data = data;
         return true;
+    }
+    if (!ensure_capacity(table)) {
+        return false;
     }
     size_t start = hash1(data.key, table->capacity);
     size_t step = hash2(data.key, table->capacity);
