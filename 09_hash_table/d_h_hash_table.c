@@ -25,6 +25,7 @@ struct DoubleHashingHashTable {
     DHSlot* slots;
     size_t capacity;
     size_t size;
+    size_t used;
 };
 typedef struct DoubleHashingHashTable DHSet;
 
@@ -52,9 +53,7 @@ void dh_destroy(DHSet* table)
 }
 static size_t normalize_key(int key, size_t capacity)
 {
-    int result = key % capacity;
-
-    return result < 0 ? result + capacity : result;
+    return (size_t)key % capacity;
 }
 static size_t hash1(int key, size_t capacity)
 {
@@ -126,12 +125,13 @@ static bool ensure_capacity(DHSet* table)
         return false;
     }
     size_t threshold = (table->capacity / 10) * 7 + ((table->capacity % 10) * 7) / 10;
-    if (table->size < threshold) {
+    if (table->used < threshold) {
         return true;
     }
-    size_t new_capacity = next_prime(table->capacity * 2);
-    if (new_capacity == 0) {
-        return false;
+    size_t new_capacity = table->capacity;
+
+    if (table->size >= threshold) {
+        new_capacity = next_prime(table->capacity * 2);
     }
     DHSlot* new_slots = calloc(new_capacity, sizeof(*new_slots));
     if (new_slots == NULL) {
@@ -158,6 +158,7 @@ static bool ensure_capacity(DHSet* table)
     free(table->slots);
     table->slots = new_slots;
     table->capacity = new_capacity;
+    table->used = table->size;
 
     return true;
 }
@@ -183,8 +184,11 @@ bool dh_insert(DHSet* table, DHItem data)
 
         if (slot->state != SLOT_OCCUPIED) {
             slot->data = data;
-            slot->state = SLOT_OCCUPIED;
             table->size++;
+            if (slot->state == SLOT_EMPTY) {
+                table->used++;
+            }
+            slot->state = SLOT_OCCUPIED;
 
             return true;
         }

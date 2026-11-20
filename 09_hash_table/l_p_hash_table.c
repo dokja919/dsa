@@ -22,6 +22,7 @@ struct LinearProbingHashTable {
     LPSlot* slots;
     size_t capacity;
     size_t size;
+    size_t used;
 };
 
 LPSet* lp_create(void)
@@ -48,9 +49,7 @@ void lp_destroy(LPSet* table)
 }
 static size_t hash(int key, size_t capacity)
 {
-    int result = key % capacity;
-
-    return result < 0 ? result + capacity : result;
+    return (size_t)key % capacity;
 }
 bool lp_search(LPSet* table, int key, size_t* index_out, LPItem* data_out)
 {
@@ -85,11 +84,13 @@ static bool ensure_capacity(LPSet* table)
         return false;
     }
     size_t threshold = (table->capacity / 10) * 7 + ((table->capacity % 10) * 7) / 10;
-    if (table->size < threshold) {
+    if (table->used < threshold) {
         return true;
     }
-    size_t new_capacity = table->capacity * 2;
-
+    size_t new_capacity = table->capacity;
+    if (table->size >= threshold) {
+        new_capacity *= 2;
+    }
     LPSlot* new_slots = calloc(new_capacity, sizeof(*new_slots));
     if (new_slots == NULL) {
         return false;
@@ -109,6 +110,7 @@ static bool ensure_capacity(LPSet* table)
     free(table->slots);
     table->slots = new_slots;
     table->capacity = new_capacity;
+    table->used = table->size;
 
     return true;
 }
@@ -133,8 +135,11 @@ bool lp_insert(LPSet* table, LPItem data)
 
         if (slot->state != SLOT_OCCUPIED) {
             slot->data = data;
-            slot->state = SLOT_OCCUPIED;
             table->size++;
+            if (slot->state == SLOT_EMPTY) {
+                table->used++;
+            }
+            slot->state = SLOT_OCCUPIED;
 
             return true;
         }
