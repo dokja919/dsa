@@ -1,3 +1,4 @@
+#include "d_h_hash_table.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,10 +6,6 @@
 enum {
     DH_INITIAL_CAPACITY = 11
 };
-
-typedef struct {
-    int key;
-} DHItem;
 
 typedef enum {
     SLOT_EMPTY,
@@ -27,7 +24,6 @@ struct DoubleHashingHashTable {
     size_t size;
     size_t used;
 };
-typedef struct DoubleHashingHashTable DHSet;
 
 DHSet* dh_create(void)
 {
@@ -223,65 +219,3 @@ bool dh_delete(DHSet* table, int key, DHItem* data_out)
     }
     return dh_delete_at(table, index, data_out);
 }
-
-// int main(void)
-//{
-//     DHSet ht;
-//
-//     if (!init_hash_table(&ht, 11)) {
-//         printf("Hash table initialization failed.\n");
-//         return 1;
-//     }
-//
-//     int values[] = { 2, 3, 5, 7, 11, 13, 19, 23, 25, 29 };
-//     int count = sizeof(values) / sizeof(values[0]);
-//
-//     for (int i = 0; i < count; i++) {
-//         int index = insert(&ht, values[i]);
-//
-//         if (index != -1) {
-//             printf("Inserted %d at index %d\n", values[i], index);
-//         } else {
-//             printf("Cannot insert %d\n", values[i]);
-//         }
-//     }
-//
-//     printf("\n");
-//     print_hash_table(&ht);
-//
-//     int key = 23;
-//     int index = search(&ht, key);
-//
-//     if (index != -1) {
-//         printf("\nFound %d at index %d\n", key, index);
-//     } else {
-//         printf("\n%d not found\n", key);
-//     }
-//
-//     key = 5;
-//
-//     if (delete_key(&ht, key)) {
-//         printf("\nDeleted %d\n", key);
-//     } else {
-//         printf("\n%d not found\n", key);
-//     }
-//
-//     printf("\n");
-//     print_hash_table(&ht);
-//
-//     key = 31;
-//     index = insert(&ht, key);
-//
-//     if (index != -1) {
-//         printf("\nInserted %d at index %d\n", key, index);
-//     } else {
-//         printf("\nCannot insert %d\n", key);
-//     }
-//
-//     printf("\n");
-//     print_hash_table(&ht);
-//
-//     free_hash_table(&ht);
-//
-//     return 0;
-// }
