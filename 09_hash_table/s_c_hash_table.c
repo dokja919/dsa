@@ -166,12 +166,11 @@ bool sc_search(SCSet* table, int key, SCIter* iter_out, SCItem* data_out)
 }
 static void node_unlink(SCSet* table, size_t index, SCNode* node)
 {
-    if (node->prev != NULL) {
-        node->prev->next = node->next;
-    } else {
+    if (node->prev == NULL) {
         table->buckets[index] = node->next;
+    } else {
+        node->prev->next = node->next;
     }
-
     if (node->next != NULL) {
         node->next->prev = node->prev;
     }
