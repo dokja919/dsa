@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-bool binary_search(int arr[], size_t n, int key, size_t *index)
+bool binary_search(int arr[], size_t n, int key, size_t* index)
 {
     if (arr == NULL || index == NULL) {
         return false;
@@ -44,7 +44,7 @@ typedef struct {
     double ratio;
 } Item;
 
-bool fractional_knapsack(Item items[], size_t n, double capacity, double *max_value)
+bool fractional_knapsack(Item items[], size_t n, double capacity, double* max_value)
 {
     if (items == NULL || capacity < 0.0 || max_value == NULL) {
         return false;
@@ -102,8 +102,36 @@ void greedy_algorithm(void)
         printf("max value: %.2f\n", max_value);
     }
 }
+bool fibonacci(size_t n, unsigned int* value)
+{
+    if (n <= 1) {
+        if (value != NULL) {
+            *value = (unsigned int)n;
+        }
+        return true;
+    }
+    unsigned int a = 0;
+    unsigned int b = 1;
+    unsigned int c;
+
+    for (size_t i = 1; i < n; i++) {
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    if (value != NULL) {
+        *value = c;
+    }
+    return true;
+}
 void dynamic_programming(void)
 {
+    size_t n = 4;
+    unsigned int value;
+
+    if (fibonacci(n, &value)) {
+        printf("%u", value);
+    }
 }
 void backtracking(void)
 {
@@ -117,7 +145,7 @@ void print_array(int array[], size_t n)
 }
 int main(void)
 {
-    size_t paradigm_number = 1;
+    size_t paradigm_number = 2;
 
     switch (paradigm_number) {
     case 0:
