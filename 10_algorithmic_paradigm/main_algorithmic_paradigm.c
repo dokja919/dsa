@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void print_array(int* array, size_t n)
+void print_array(int array[], size_t n)
 {
     for (size_t i = 0; i < n; i++) {
         printf("%d ", array[i]);
@@ -105,97 +105,110 @@ void greedy_algorithm(void)
         printf("max value: %.2f\n", max_value);
     }
 }
-int fibonacci_topdown(size_t n, int* memo)
+int fibonacci_topdown(size_t index, int memo[])
 {
-    // if (n <= 1) {
+    // if (index <= 1) {
     //     return n;
     // }
-    // return fibonacci_topdown(n - 2) + fibonacci_topdown(n - 1);
-    if (n <= 1) {
-        memo[0] = 0;
-        if (n == 1) {
+    // return fibonacci_topdown(index - 2) + fibonacci_topdown(index - 1);
+    if (index == 0) {
+        return 0;
+    }
+    if (index <= 2) {
+        memo[0] = 1;
+
+        if (index == 2) {
             memo[1] = 1;
         }
-        return (int)n;
+        return 1;
     }
-    if (memo[n] != -1) {
-        return memo[n];
+    if (memo[index - 1] != -1) {
+        return memo[index - 1];
     }
-    memo[n] = fibonacci_topdown(n - 2, memo) + fibonacci_topdown(n - 1, memo);
+    memo[index - 1] = fibonacci_topdown(index - 2, memo) + fibonacci_topdown(index - 1, memo);
 
-    return memo[n];
+    return memo[index - 1];
 }
-bool fibonacci_tabulation(size_t n, int table[], int* value)
+bool fibonacci_tabulation(size_t index, int table[], int* value)
 {
     if (value == NULL) {
         return false;
     }
-    table[0] = 0;
-    if (n >= 1) {
+    if (index == 0) {
+        *value = 0;
+        return true;
+    }
+    table[0] = 1;
+
+    if (index >= 2) {
         table[1] = 1;
     }
-    for (size_t i = 2; i < n + 1; i++) {
+    for (size_t i = 2; i < index; i++) {
         table[i] = table[i - 2] + table[i - 1];
     }
-    *value = table[n];
+    *value = table[index - 1];
 
     return true;
 }
-bool fibonacci_iterative(size_t n, int* value)
+bool fibonacci_iterative(size_t index, int* value)
 {
     if (value == NULL) {
         return false;
     }
-    int prev = 0;
+    if (index == 0) {
+        *value = 0;
+        return true;
+    }
+    int prev = 1;
     int current = 1;
 
-    for (size_t i = 2; i <= n; i++) {
+    for (size_t i = 2; i < index; i++) {
         int next = prev + current;
         prev = current;
         current = next;
     }
-    *value = (n == 0) ? prev : current;
+    *value = (index == 1) ? prev : current;
 
     return true;
 }
 void dynamic_programming(void)
 {
-    size_t n = 0;
+    size_t index = 0;
     size_t method = 0;
     int value;
 
     switch (method) {
     case 0: {
-        int* memo = malloc((n + 1) * sizeof(*memo));
+        int* memo = malloc(index * sizeof(*memo));
         if (memo == NULL) {
             return;
         }
-        for (size_t i = 0; i < n + 1; i++) {
+        for (size_t i = 0; i < index; i++) {
             memo[i] = -1;
         }
-        value = fibonacci_topdown(n, memo);
+        value = fibonacci_topdown(index, memo);
 
         printf("%d\n", value);
-        print_array(memo, n + 1);
+        print_array(memo, index);
         free(memo);
 
         break;
     }
     case 1: {
-        int* table = malloc((n + 1), sizeof(*table));
+        int* table = malloc(index * sizeof(*table));
         if (table == NULL) {
             return;
         }
-        if (fibonacci_tabulation(n, table, &value)) {
+        if (fibonacci_tabulation(index, table, &value)) {
             printf("%d\n", value);
-            print_array(table, n + 1);
+            print_array(table, index);
         }
         free(table);
         break;
     }
     case 2:
-        if (fibonacci_iterative(n, &value)) {
-            printf("%u", value);
+        if (fibonacci_iterative(index, &value)) {
+            printf("%d\n", value);
         }
         break;
     }
@@ -205,7 +218,7 @@ void backtracking(void)
 }
 int main(void)
 {
-    size_t paradigm_number = 1;
+    size_t paradigm_number = 2;
 
     switch (paradigm_number) {
     case 0:
