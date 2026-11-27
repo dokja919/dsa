@@ -173,18 +173,15 @@ bool fibonacci_iterative(size_t index, int* value)
 }
 void dynamic_programming(void)
 {
-    size_t index = 0;
+    size_t index = 5;
     size_t method = 0;
     int value;
 
     switch (method) {
     case 0: {
-        int* memo = malloc(index * sizeof(*memo));
+        int* memo = calloc(index, sizeof(*memo));
         if (memo == NULL) {
             return;
-        }
-        for (size_t i = 0; i < index; i++) {
-            memo[i] = 0;
         }
         value = fibonacci_topdown(index, memo);
 
