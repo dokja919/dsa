@@ -122,7 +122,7 @@ int fibonacci_topdown(size_t index, int memo[])
         }
         return 1;
     }
-    if (memo[index - 1] != -1) {
+    if (memo[index - 1] != 0) {
         return memo[index - 1];
     }
     memo[index - 1] = fibonacci_topdown(index - 2, memo) + fibonacci_topdown(index - 1, memo);
@@ -184,7 +184,7 @@ void dynamic_programming(void)
             return;
         }
         for (size_t i = 0; i < index; i++) {
-            memo[i] = -1;
+            memo[i] = 0;
         }
         value = fibonacci_topdown(index, memo);
 
