@@ -105,31 +105,6 @@ void greedy_algorithm(void)
         printf("max value: %.2f\n", max_value);
     }
 }
-int fibonacci_topdown(size_t index, int sequence[])
-{
-    // if (index <= 1) {
-    //     return n;
-    // }
-    // return fibonacci_topdown(index - 2) + fibonacci_topdown(index - 1);
-    if (index == 0) {
-        return 0;
-    }
-    if (index <= 2) {
-        sequence[0] = 1;
-
-        if (index == 2) {
-            sequence[1] = 1;
-        }
-        return 1;
-    }
-    if (sequence[index - 1] != 0) {
-        return sequence[index - 1];
-    }
-    sequence[index - 1] =
-        fibonacci_topdown(index - 2, sequence) + fibonacci_topdown(index - 1, sequence);
-
-    return sequence[index - 1];
-}
 bool fibonacci_bottomup(size_t index, int* value)
 {
     if (value == NULL) {
@@ -199,28 +174,7 @@ int max_subarray_sum_naive(int array[], size_t n)
     }
     return max_sum;
 }
-int compare(int a, int b)
-{
-    return (a > b) ? a : b;
-}
-bool max_subarray_sum_bottomup(int array[], size_t n, int* total_max)
-{
-    if (array == NULL || total_max == NULL || n == 0) {
-        return false;
-    }
-    int current_max = array[0];
-    *total_max = current_max;
-
-    for (size_t i = 1; i < n; i++) {
-        current_max = current_max <= 0 ? array[i] : current_max + array[i];
-
-        if (current_max > *total_max) {
-            *total_max = current_max;
-        }
-    }
-    return true;
-}
-bool max_subarray_sum_bottomup1(int array[], size_t n, int* total_max, size_t* total_start, size_t* total_end)
+bool max_subarray_sum_bottomup(int array[], size_t n, int* total_max, size_t* total_start, size_t* total_end)
 {
     if (array == NULL || total_max == NULL || total_start == NULL || total_end == NULL || n == 0) {
         return false;
