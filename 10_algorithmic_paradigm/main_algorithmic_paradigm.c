@@ -152,28 +152,6 @@ void fibonacci(void)
         break;
     }
 }
-int max_subarray_sum_naive(int array[], size_t n)
-{
-
-    int max_sum = INT_MIN;
-    int start = 0;
-    int end = 0;
-
-    for (size_t i = 0; i < n; i++) {
-        int sum = 0;
-
-        for (size_t j = i; j < n; j++) {
-            sum += array[j];
-
-            if (sum > max_sum) {
-                max_sum = sum;
-                start = i;
-                end = i;
-            }
-        }
-    }
-    return max_sum;
-}
 bool max_subarray_sum_bottomup(int array[], size_t n, int* total_max, size_t* total_start, size_t* total_end)
 {
     if (array == NULL || total_max == NULL || total_start == NULL || total_end == NULL || n == 0) {
