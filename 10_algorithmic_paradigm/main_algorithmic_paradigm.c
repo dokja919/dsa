@@ -129,28 +129,7 @@ int fibonacci_topdown(size_t index, int sequence[])
 
     return sequence[index - 1];
 }
-bool fibonacci_tabulation(size_t index, int sequence[], int* value)
-{
-    if (value == NULL) {
-        return false;
-    }
-    if (index == 0) {
-        *value = 0;
-        return true;
-    }
-    sequence[0] = 1;
-
-    if (index >= 2) {
-        sequence[1] = 1;
-    }
-    for (size_t i = 2; i < index; i++) {
-        sequence[i] = sequence[i - 2] + sequence[i - 1];
-    }
-    *value = sequence[index - 1];
-
-    return true;
-}
-bool fibonacci_optimized(size_t index, int* value)
+bool fibonacci_bottomup(size_t index, int* value)
 {
     if (value == NULL) {
         return false;
@@ -171,13 +150,34 @@ bool fibonacci_optimized(size_t index, int* value)
 
     return true;
 }
+int max_subarray_sum(int array[], size_t n)
+{
+    int max_sum = INT_MIN;
+    int start = 0;
+    int end = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        int sum = 0;
+
+        for (size_t j = i; j < n; j++) {
+            sum += array[j];
+
+            if (sum > max_sum) {
+                max_sum = sum;
+                start = i;
+                end = i;
+            }
+        }
+    }
+    return max_sum;
+}
 void dynamic_programming(void)
 {
     size_t index = 5;
-    size_t fibonacci = 0;
+    size_t dp_index = 0;
     int value;
 
-    switch (fibonacci) {
+    switch (dp_index) {
     case 0: {
         int* memo = calloc(index, sizeof(*memo));
         if (memo == NULL) {
@@ -190,20 +190,8 @@ void dynamic_programming(void)
         free(memo);
         break;
     }
-    case 1: {
-        int* table = malloc(index * sizeof(*table));
-        if (table == NULL) {
-            return;
-        }
-        if (fibonacci_tabulation(index, table, &value)) {
-            printf("%d\n", value);
-            print_array(table, index);
-        }
-        free(table);
-        break;
-    }
-    case 2:
-        if (fibonacci_optimized(index, &value)) {
+    case 1:
+        if (fibonacci_bottomup(index, &value)) {
             printf("%d\n", value);
         }
         break;
