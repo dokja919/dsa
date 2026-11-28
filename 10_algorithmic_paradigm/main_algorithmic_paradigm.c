@@ -150,7 +150,7 @@ bool fibonacci_tabulation(size_t index, int sequence[], int* value)
 
     return true;
 }
-bool fibonacci_iterative(size_t index, int* value)
+bool fibonacci_optimized(size_t index, int* value)
 {
     if (value == NULL) {
         return false;
@@ -167,7 +167,7 @@ bool fibonacci_iterative(size_t index, int* value)
         prev = current;
         current = next;
     }
-    *value = (index == 1) ? prev : current;
+    *value = current;
 
     return true;
 }
@@ -188,7 +188,6 @@ void dynamic_programming(void)
         printf("%d\n", value);
         print_array(memo, index);
         free(memo);
-
         break;
     }
     case 1: {
@@ -204,7 +203,7 @@ void dynamic_programming(void)
         break;
     }
     case 2:
-        if (fibonacci_iterative(index, &value)) {
+        if (fibonacci_optimized(index, &value)) {
             printf("%d\n", value);
         }
         break;
