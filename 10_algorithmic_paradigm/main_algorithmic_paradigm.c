@@ -10,9 +10,9 @@ void print_array(int array[], size_t n)
     }
     printf("\n");
 }
-bool binary_search(int arr[], size_t n, int key, size_t* index)
+bool binary_search(int array[], size_t n, int key, size_t* index)
 {
-    if (arr == NULL || index == NULL) {
+    if (array == NULL || index == NULL) {
         return false;
     }
     size_t low = 0;
@@ -21,11 +21,11 @@ bool binary_search(int arr[], size_t n, int key, size_t* index)
     while (low < high) {
         size_t mid = low + (high - low) / 2;
 
-        if (arr[mid] == key) {
+        if (array[mid] == key) {
             *index = mid;
             return true;
         }
-        if (key < arr[mid]) {
+        if (key < array[mid]) {
             high = mid;
         } else {
             low = mid + 1;
@@ -125,7 +125,8 @@ int fibonacci_topdown(size_t index, int sequence[])
     if (sequence[index - 1] != 0) {
         return sequence[index - 1];
     }
-    sequence[index - 1] = fibonacci_topdown(index - 2, sequence) + fibonacci_topdown(index - 1, sequence);
+    sequence[index - 1] =
+        fibonacci_topdown(index - 2, sequence) + fibonacci_topdown(index - 1, sequence);
 
     return sequence[index - 1];
 }
@@ -150,8 +151,35 @@ bool fibonacci_bottomup(size_t index, int* value)
 
     return true;
 }
-int max_subarray_sum(int array[], size_t n)
+void fibonacci(void)
 {
+    size_t index = 5;
+    int value;
+    size_t fibonacci_index = 0;
+
+    switch (fibonacci_index) {
+    case 0: {
+        int* memo = calloc(index, sizeof(*memo));
+        if (memo == NULL) {
+            return;
+        }
+        value = fibonacci_topdown(index, memo);
+
+        printf("%d\n", value);
+        print_array(memo, index);
+        free(memo);
+        break;
+    }
+    case 1:
+        if (fibonacci_bottomup(index, &value)) {
+            printf("%d\n", value);
+        }
+        break;
+    }
+}
+int max_subarray_sum_naive(int array[], size_t n)
+{
+
     int max_sum = INT_MIN;
     int start = 0;
     int end = 0;
@@ -171,29 +199,67 @@ int max_subarray_sum(int array[], size_t n)
     }
     return max_sum;
 }
+int compare(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+bool max_subarray_sum_bottomup(int array[], size_t n, int* total_max)
+{
+    if (array == NULL || total_max == NULL || n == 0) {
+        return false;
+    }
+    int current_max = array[0];
+    *total_max = current_max;
+
+    for (size_t i = 1; i < n; i++) {
+        current_max = current_max <= 0 ? array[i] : current_max + array[i];
+
+        if (current_max > *total_max) {
+            *total_max = current_max;
+        }
+    }
+    return true;
+}
+bool max_subarray_sum_bottomup1(int array[], size_t n, int* total_max, size_t* total_start, size_t* total_end)
+{
+    if (array == NULL || total_max == NULL || total_start == NULL || total_end == NULL || n == 0) {
+        return false;
+    }
+    int current_max = array[0];
+    size_t current_start = 0;
+
+    *total_max = current_max;
+    *total_start = 0;
+    *total_end = 0;
+
+    for (size_t i = 1; i < n; i++) {
+        if (current_max <= 0) {
+            current_max = array[i];
+            current_start = i;
+        } else {
+            current_max += array[i];
+        }
+        if (current_max > *total_max) {
+            *total_max = current_max;
+            *total_start = current_start;
+            *total_end = i;
+        }
+    }
+    return true;
+}
+void max_subarray_sum()
+{
+}
 void dynamic_programming(void)
 {
-    size_t index = 5;
-    size_t dp_index = 0;
-    int value;
+    size_t dp = 0;
 
-    switch (dp_index) {
-    case 0: {
-        int* memo = calloc(index, sizeof(*memo));
-        if (memo == NULL) {
-            return;
-        }
-        value = fibonacci_topdown(index, memo);
-
-        printf("%d\n", value);
-        print_array(memo, index);
-        free(memo);
+    switch (dp) {
+    case 0:
+        fibonacci();
         break;
-    }
     case 1:
-        if (fibonacci_bottomup(index, &value)) {
-            printf("%d\n", value);
-        }
+        max_subarray_sum();
         break;
     }
 }
