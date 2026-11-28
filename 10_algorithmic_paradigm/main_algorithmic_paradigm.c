@@ -105,7 +105,7 @@ void greedy_algorithm(void)
         printf("max value: %.2f\n", max_value);
     }
 }
-int fibonacci_topdown(size_t index, int memo[])
+int fibonacci_topdown(size_t index, int sequence[])
 {
     // if (index <= 1) {
     //     return n;
@@ -115,21 +115,21 @@ int fibonacci_topdown(size_t index, int memo[])
         return 0;
     }
     if (index <= 2) {
-        memo[0] = 1;
+        sequence[0] = 1;
 
         if (index == 2) {
-            memo[1] = 1;
+            sequence[1] = 1;
         }
         return 1;
     }
-    if (memo[index - 1] != 0) {
-        return memo[index - 1];
+    if (sequence[index - 1] != 0) {
+        return sequence[index - 1];
     }
-    memo[index - 1] = fibonacci_topdown(index - 2, memo) + fibonacci_topdown(index - 1, memo);
+    sequence[index - 1] = fibonacci_topdown(index - 2, sequence) + fibonacci_topdown(index - 1, sequence);
 
-    return memo[index - 1];
+    return sequence[index - 1];
 }
-bool fibonacci_tabulation(size_t index, int table[], int* value)
+bool fibonacci_tabulation(size_t index, int sequence[], int* value)
 {
     if (value == NULL) {
         return false;
@@ -138,15 +138,15 @@ bool fibonacci_tabulation(size_t index, int table[], int* value)
         *value = 0;
         return true;
     }
-    table[0] = 1;
+    sequence[0] = 1;
 
     if (index >= 2) {
-        table[1] = 1;
+        sequence[1] = 1;
     }
     for (size_t i = 2; i < index; i++) {
-        table[i] = table[i - 2] + table[i - 1];
+        sequence[i] = sequence[i - 2] + sequence[i - 1];
     }
-    *value = table[index - 1];
+    *value = sequence[index - 1];
 
     return true;
 }
@@ -174,10 +174,10 @@ bool fibonacci_iterative(size_t index, int* value)
 void dynamic_programming(void)
 {
     size_t index = 5;
-    size_t method = 0;
+    size_t fibonacci = 0;
     int value;
 
-    switch (method) {
+    switch (fibonacci) {
     case 0: {
         int* memo = calloc(index, sizeof(*memo));
         if (memo == NULL) {
@@ -215,9 +215,9 @@ void backtracking(void)
 }
 int main(void)
 {
-    size_t paradigm_number = 2;
+    size_t paradigm = 2;
 
-    switch (paradigm_number) {
+    switch (paradigm) {
     case 0:
         divide_and_conquer();
         break;
